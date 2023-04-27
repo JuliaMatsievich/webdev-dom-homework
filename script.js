@@ -5,43 +5,54 @@ const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
 
-
-function renderDate () {
+//Создание даты в нужном формате
+function renderDate() {
 	const date = new Date();
-	const dateDataArr= date.toLocaleDateString().split('.')
+	const dateDataArr = date.toLocaleDateString().split('.')
 	dateDataArr[dateDataArr.length - 1] = dateDataArr[dateDataArr.length - 1].slice(2);
 	const dateData = dateDataArr.join('.');
 
-	const time = date.toLocaleTimeString().slice(0,-3);
+	const time = date.toLocaleTimeString().slice(0, -3);
 
 	return `${dateData} ${time}`;
 }
 
+//Показать ошибку
 function showError() {
 	error.classList.remove('hidden');
 	error.textContent = 'Проверьте введены ли все данные'
 }
 
+//Спрятать ошибку
 function hideError() {
 	error.classList.add('hidden');
 }
 
+//Проверка на валидность полей ввода
 function isValid() {
-	if(inputName.value || inputComment.value) {
+	if (inputName.value && inputComment.value) {
 		return true;
 	} else {
 		return false;
 	}
 }
 
+//Начальное состояние формы
+function initialState() {
+	inputName.value = '';
+	inputComment.value = '';
+	formButton.disabled = true;
+	formButton.classList.add('button-disabled')
+}
 
-formButton.addEventListener('click', () => {
+// Обработка добавления комментария
+function handlerAddComment() {
 	hideError();
-	if(!isValid()) {
+	if (!isValid()) {
 		showError();
 		return;
 	}
-	const date = renderDate ();
+	const date = renderDate();
 	const oldListComments = listComments.innerHTML;
 	const newListComments = `
 	<li class="comment">
@@ -61,9 +72,28 @@ formButton.addEventListener('click', () => {
 	  </div>
 	</div>
  </li>`
- listComments.innerHTML = oldListComments + newListComments;
+	listComments.innerHTML = oldListComments + newListComments;
+	initialState();
+}
 
+initialState();
+
+formButton.addEventListener('click', handlerAddComment);
+
+form.addEventListener('keyup', (event) => {
+	if (event.key == 'Enter') {
+		handlerAddComment();
+	}
+});
+
+
+form.addEventListener('input', () => {
+		if (inputName.value && inputComment.value) {
+		formButton.disabled = false;
+		formButton.classList.remove('button-disabled')
+	} else {
+		formButton.disabled = true;
+		formButton.classList.add('button-disabled')
+	}
 })
-
-
 

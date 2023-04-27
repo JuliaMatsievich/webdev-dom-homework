@@ -143,3 +143,7 @@ body {
   .hidden {
     display: none;
   }
+
+  .button-disabled {
+    background-color: rgb(180, 180, 180);
+  }

@@ -5,6 +5,7 @@ const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
 const buttonDelete = document.querySelector('.button-delete');
+
 //Создание даты в нужном формате
 function renderDate() {
 	const date = new Date();
@@ -97,3 +98,7 @@ form.addEventListener('input', () => {
 	}
 })
 
+buttonDelete.addEventListener('click', () => {
+	let comment = '<li class="comment">';
+	listComments.innerHTML = listComments.innerHTML.slice(0,listComments.innerHTML.lastIndexOf(comment))
+})

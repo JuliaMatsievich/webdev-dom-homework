@@ -4,7 +4,7 @@ const inputComment = form.querySelector('.add-form-text');
 const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
-
+const buttonDelete = document.querySelector('.button-delete');
 //Создание даты в нужном формате
 function renderDate() {
 	const date = new Date();

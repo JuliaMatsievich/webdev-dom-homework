@@ -122,7 +122,8 @@ body {
     justify-content: flex-end;
   }
 
-  .add-form-button {
+  .add-form-button,
+  .button-delete {
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -132,6 +133,24 @@ body {
     cursor: pointer;
   }
 
-  .add-form-button:hover {
+  .button-delete {
+    width: 596px;
+  }
+  
+
+  .add-form-button:hover,
+  .button-delete:hover {
     opacity: 0.9;
+  }
+
+  .error{ 
+    color: red;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .button-disabled {
+    background-color: rgb(180, 180, 180);
   }

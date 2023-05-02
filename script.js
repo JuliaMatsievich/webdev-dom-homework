@@ -6,6 +6,21 @@ const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
 const buttonDelete = document.querySelector('.button-delete');
 
+const comments = [
+	{
+		name: 'Глеб Фокин',
+		date: '12.02.22 12:18',
+		text: 'Это будет первый комментарий на этой странице',
+		likesCounter: 3,
+	},
+	{
+		name: 'Варвара Н.',
+		date: '13.02.22 19:22',
+		text: 'Мне нравится как оформлена эта страница! ❤',
+		likesCounter: 75,
+	}
+]
+
 //Создание даты в нужном формате
 function renderDate() {
 	const date = new Date();
@@ -54,28 +69,46 @@ function handlerAddComment() {
 		return;
 	}
 	const date = renderDate();
-	const oldListComments = listComments.innerHTML;
-	const newListComments = `
-	<li class="comment">
-	<div class="comment-header">
-	  <div>${inputName.value}</div>
-	  <div>${date}</div>
-	</div>
-	<div class="comment-body">
-	  <div class="comment-text">
-		 ${inputComment.value}
-	  </div>
-	</div>
-	<div class="comment-footer">
-	  <div class="likes">
-		 <span class="likes-counter">0</span>
-		 <button class="like-button -active-like"></button>
-	  </div>
-	</div>
- </li>`
-	listComments.innerHTML = oldListComments + newListComments;
+
+	comments.push({
+		name: inputName.value,
+		date: date,
+		text: inputComment.value,
+		likesCounter: 0,
+	})
+
+	renderComment();
+
 	initialState();
 }
+
+function renderComment() {
+	const commentsHtml = comments.map((comment) => {
+		return `
+		<li class="comment">
+		<div class="comment-header">
+		  <div>${comment.name}</div>
+		  <div>${comment.date}</div>
+		</div>
+		<div class="comment-body">
+		  <div class="comment-text">
+			 ${comment.text}
+		  </div>
+		</div>
+		<div class="comment-footer">
+		  <div class="likes">
+			 <span class="likes-counter">${comment.likesCounter}</span>
+			 <button class="like-button"></button>
+		  </div>
+		</div>
+	 </li>`
+	})
+
+	listComments.innerHTML = commentsHtml.join('');
+
+}
+
+renderComment();
 
 initialState();
 

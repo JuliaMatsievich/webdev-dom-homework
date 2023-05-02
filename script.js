@@ -82,6 +82,43 @@ function handlerAddComment() {
 	initialState();
 }
 
+// Подписка на события кнопки Редактировать
+function initEditButtonEventListeners() {
+	const EditButtons = listComments.querySelectorAll('.edit-button');
+
+	for(const EditButton of EditButtons) {
+		EditButton.addEventListener('click',(event) => {
+			const target = event.target;
+			renderEditComment (target)
+		})
+	}
+}
+
+//Создание формы редактирования комментария
+function renderEditComment (element) {
+	const parent = element.closest('.comment');
+	const commentBody = parent.querySelector('.comment-body');
+	const commentText = parent.querySelector('.comment-text');
+	commentBody.innerHTML = `
+	<div class="edit-form">
+	<textarea type="textarea" class="edit-form-text" rows="4">${commentText.textContent}</textarea>
+	<div class="add-form-row">
+	  <button class="edit-form-button">Сохранить</button>
+	</div>
+	</div>
+	`
+	const newCommentText = parent.querySelector('.edit-form-text');
+	const editButtonSave = parent.querySelector('.edit-form-button');
+
+	editButtonSave.addEventListener('click',() => {
+		commentBody.innerHTML = `
+		<div class="comment-text">${newCommentText.value}</div>
+		`
+	})
+
+
+}
+
 //Рендер комментариве
 function renderComment() {
 	const commentsHtml = comments.map((comment) => {
@@ -92,14 +129,14 @@ function renderComment() {
 		  <div>${comment.date}</div>
 		</div>
 		<div class="comment-body">
-		  <div class="comment-text">
-			 ${comment.text}
-		  </div>
+		  <div class="comment-text">${comment.text}</div>
 		</div>
 		<div class="comment-footer">
 		  <div class="likes">
 			 <span class="likes-counter" data-likeCounter = "${comment.likesCounter}">${comment.likesCounter}</span>
 			 <button class="like-button"></button>
+			 <button class="edit-button"></button>
+			 <button class="delete-button"></button>
 		  </div>
 		</div>
 	 </li>`
@@ -107,6 +144,7 @@ function renderComment() {
 
 	listComments.innerHTML = commentsHtml.join('');
 	initLikeButtonEventListeners();
+	initEditButtonEventListeners();
 }
 
 //Подписка на события клика по кнопке Лайк

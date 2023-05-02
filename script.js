@@ -82,6 +82,7 @@ function handlerAddComment() {
 	initialState();
 }
 
+//Рендер комментариве
 function renderComment() {
 	const commentsHtml = comments.map((comment) => {
 		return `
@@ -97,7 +98,7 @@ function renderComment() {
 		</div>
 		<div class="comment-footer">
 		  <div class="likes">
-			 <span class="likes-counter">${comment.likesCounter}</span>
+			 <span class="likes-counter" data-likeCounter = "${comment.likesCounter}">${comment.likesCounter}</span>
 			 <button class="like-button"></button>
 		  </div>
 		</div>
@@ -105,11 +106,35 @@ function renderComment() {
 	})
 
 	listComments.innerHTML = commentsHtml.join('');
-
+	initLikeButtonEventListeners();
 }
 
-renderComment();
+//Подписка на события клика по кнопке Лайк
+function initLikeButtonEventListeners() {
+	const likeButtons = listComments.querySelectorAll('.like-button');
+	
+	for(const likeButton of likeButtons) {
+		likeButton.addEventListener('click', (event) => {	
+			const target = event.target;
+			const likesParrent = target.closest('.likes');
+			const likesCounter = likesParrent.querySelector('.likes-counter')
 
+			if(!likeButton.matches('.-active-like')) {
+				likeButton.classList.add('-active-like');
+				likesCounter.dataset.likecounter = +likesCounter.dataset.likecounter + 1;
+				likesCounter.textContent = likesCounter.dataset.likecounter;				
+			} else {
+				likeButton.classList.remove('-active-like');
+				likesCounter.dataset.likecounter = +likesCounter.dataset.likecounter - 1;
+				likesCounter.textContent = likesCounter.dataset.likecounter;
+			}
+		})
+	}
+}
+
+
+
+renderComment();
 initialState();
 
 formButton.addEventListener('click', handlerAddComment);

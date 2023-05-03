@@ -4,7 +4,7 @@ const inputComment = form.querySelector('.add-form-text');
 const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
-const buttonDelete = document.querySelector('.button-delete');
+// const buttonDelete = document.querySelector('.button-delete');
 
 const comments = [
 	{
@@ -128,7 +128,7 @@ function renderEditComment (element) {
 
 }
 
-//Рендер комментариве
+//Рендер комментариев
 function renderComments() {
 	const commentsHtml = comments.map((comment,index) => {
 		return `
@@ -225,7 +225,7 @@ form.addEventListener('input', () => {
 	}
 })
 
-buttonDelete.addEventListener('click', () => {
-	let comment = '<li class="comment">';
-	listComments.innerHTML = listComments.innerHTML.slice(0,listComments.innerHTML.lastIndexOf(comment))
-})
+// buttonDelete.addEventListener('click', () => {
+// 	let comment = '<li class="comment">';
+// 	listComments.innerHTML = listComments.innerHTML.slice(0,listComments.innerHTML.lastIndexOf(comment))
+// })

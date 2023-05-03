@@ -82,7 +82,7 @@ function handlerAddComment() {
 		likesCounter: 0,
 	})
 
-	renderComment();
+	renderComments();
 
 	initialState();
 }
@@ -129,8 +129,8 @@ function renderEditComment (element) {
 }
 
 //Рендер комментариве
-function renderComment() {
-	const commentsHtml = comments.map((comment) => {
+function renderComments() {
+	const commentsHtml = comments.map((comment,index) => {
 		return `
 		<li class="comment">
 		<div class="comment-header">
@@ -145,7 +145,7 @@ function renderComment() {
 			 <span class="likes-counter" data-likeCounter = "${comment.likesCounter}">${comment.likesCounter}</span>
 			 <button class="like-button"></button>
 			 <button class="edit-button"></button>
-			 <button class="delete-button"></button>
+			 <button class="delete-button" data-index="${index}"></button>
 		  </div>
 		</div>
 	 </li>`
@@ -154,6 +154,7 @@ function renderComment() {
 	listComments.innerHTML = commentsHtml.join('');
 	initLikeButtonEventListeners();
 	initEditButtonEventListeners();
+	initDeleteButtonEventListeners();
 }
 
 //Подписка на события клика по кнопке Лайк
@@ -179,9 +180,30 @@ function initLikeButtonEventListeners() {
 	}
 }
 
+//Подписка на кнопку Удалить комменатрий
+function initDeleteButtonEventListeners() {
 
+	const deleteButtons = document.querySelectorAll('.delete-button');
 
-renderComment();
+	for (const deleteButton of deleteButtons) {
+		deleteButton.addEventListener('click', () => {
+			const index = deleteButton.dataset.index;
+			comments.splice(index,1);
+			renderComments();
+		})
+
+	}
+	// listComments.addEventListener('click',(event) => {
+	// 	const target = event.target;
+	// 	if(!target.matches('.delete-button')) return;
+
+	// 	const index = target.dataset.index;
+	// 	console.log(index);
+	// 	console.log(target);
+	// })
+}
+
+renderComments();
 initialState();
 
 formButton.addEventListener('click', handlerAddComment);

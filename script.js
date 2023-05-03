@@ -34,14 +34,19 @@ function renderDate() {
 }
 
 //Показать ошибку
-function showError() {
-	error.classList.remove('hidden');
-	error.textContent = 'Проверьте введены ли все данные'
+function showError(element) {
+	const divError = document.createElement('div');
+	divError.classList.add('error');
+	divError.textContent = 'Проверьте введены ли все данные';
+	element.appendChild(divError);
 }
 
 //Спрятать ошибку
 function hideError() {
-	error.classList.add('hidden');
+	const divError = document.querySelector('.error');
+	if(divError) {
+		divError.remove();
+	}	
 }
 
 //Проверка на валидность полей ввода
@@ -65,7 +70,7 @@ function initialState() {
 function handlerAddComment() {
 	hideError();
 	if (!isValid()) {
-		showError();
+		showError(form);
 		return;
 	}
 	const date = renderDate();
@@ -111,6 +116,10 @@ function renderEditComment (element) {
 	const editButtonSave = parent.querySelector('.edit-form-button');
 
 	editButtonSave.addEventListener('click',() => {
+		if(!newCommentText.value) {
+			showError(commentBody);
+			return;
+		}
 		commentBody.innerHTML = `
 		<div class="comment-text">${newCommentText.value}</div>
 		`

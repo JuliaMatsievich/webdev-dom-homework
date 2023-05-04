@@ -68,6 +68,7 @@ body {
 
   .comment-text {
     font-size: 32px;
+    white-space: pre-line;
   }
 
   .likes {
@@ -144,6 +145,7 @@ body {
 
   .add-form-text,
   .edit-form-text {
+    white-space: pre-line;
     margin-top: 12px;
     padding: 22px;
     resize: none;
@@ -188,4 +190,11 @@ body {
   .edit-form {
     display: flex;
     flex-direction: column;
+  }
+
+  .quote {
+    background: white;
+    color: black;
+    padding: 5px;
+    margin-top: 20px;
   }

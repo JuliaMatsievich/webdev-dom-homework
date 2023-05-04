@@ -75,9 +75,13 @@ function handlerAddComment() {
 	const date = renderDate();
 
 	comments.push({
-		name: inputName.value,
+		name: inputName.value.
+				replaceAll("<","&lt;").
+				replaceAll(">","&gt;"),
 		date: date,
-		text: inputComment.value,
+		text: inputComment.value.
+				replaceAll("<","&lt;").
+				replaceAll(">","&gt;"),
 		likesCounter: 0,
 	})
 
@@ -122,7 +126,7 @@ function renderEditComment (element) {
 			return;
 		}
 		commentBody.innerHTML = `
-		<div class="comment-text">${newCommentText.value}</div>
+		<div class="comment-text">${newCommentText.value.replaceAll("<","&lt;").replaceAll(">","&gt;")}</div>
 		`
 	})
 

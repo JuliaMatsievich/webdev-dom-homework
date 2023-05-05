@@ -4,6 +4,9 @@ const inputComment = form.querySelector('.add-form-text');
 const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
+let quote = '';
+let quoteBlock = '';
+let quoteArray = [];
 
 const comments = [
 	{
@@ -43,9 +46,9 @@ function showError(element) {
 //Спрятать ошибку
 function hideError() {
 	const divError = document.querySelector('.error');
-	if(divError) {
+	if (divError) {
 		divError.remove();
-	}	
+	}
 }
 
 //Проверка на валидность полей ввода
@@ -62,7 +65,7 @@ function initialState() {
 	inputName.value = '';
 	inputComment.value = '';
 	formButton.disabled = true;
-	formButton.classList.add('button-disabled')
+	formButton.classList.add('button-disabled');
 }
 
 // Обработка добавления комментария
@@ -76,17 +79,18 @@ function handlerAddComment() {
 
 	comments.push({
 		name: inputName.value.
-				replaceAll("<","&lt;").
-				replaceAll(">","&gt;"),
+			replaceAll("<", "&lt;").
+			replaceAll(">", "&gt;"),
 		date: date,
 		text: inputComment.value.
-				replaceAll("<","&lt;").
-				replaceAll(">","&gt;"),
+			replaceAll("<", "&lt;").
+			replaceAll(">", "&gt;").
+			replaceAll("/**", "<div class='quote'>").
+			replaceAll("**/", "</div>"),
 		likesCounter: 0,
 	})
 
 	renderComments();
-
 	initialState();
 }
 
@@ -94,20 +98,21 @@ function handlerAddComment() {
 function initEditButtonEventListeners() {
 	const EditButtons = listComments.querySelectorAll('.edit-button');
 
-	for(const EditButton of EditButtons) {
-		EditButton.addEventListener('click',(event) => {
+	for (const EditButton of EditButtons) {
+		EditButton.addEventListener('click', (event) => {
 			event.stopPropagation();
 			const target = event.target;
-			renderEditComment (target)
+			renderEditComment(target)
 		})
 	}
 }
 
 //Создание формы редактирования комментария
-function renderEditComment (element) {
+function renderEditComment(element) {
 	const parent = element.closest('.comment');
 	const commentBody = parent.querySelector('.comment-body');
 	const commentText = parent.querySelector('.comment-text');
+	console.log(commentText.textContent);
 	commentBody.innerHTML = `
 	<div class="edit-form">
 	<textarea type="textarea" class="edit-form-text" rows="4">${commentText.textContent}</textarea>
@@ -116,68 +121,76 @@ function renderEditComment (element) {
 	</div>
 	</div>
 	`
+
+	const editForm = parent.querySelector('.edit-form');
+	editForm.addEventListener('click', (event) => {
+		event.stopImmediatePropagation()
+	})
 	const newCommentText = parent.querySelector('.edit-form-text');
 	const editButtonSave = parent.querySelector('.edit-form-button');
+	const commentIndex = parent.dataset.comment;
 
-	editButtonSave.addEventListener('click',(event) => {
+	editButtonSave.addEventListener('click', (event) => {
 		event.stopPropagation();
-		if(!newCommentText.value) {
+		if (!newCommentText.value) {
 			showError(commentBody);
 			return;
 		}
 		commentBody.innerHTML = `
-		<div class="comment-text">${newCommentText.value.replaceAll("<","&lt;").replaceAll(">","&gt;")}</div>
+		<div class="comment-text">${newCommentText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</div>
 		`
+		comments[commentIndex].text = newCommentText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 	})
-
-
 }
 
 //Рендер комментариев
 function renderComments() {
-	const commentsHtml = comments.map((comment,index) => {
-		return `
-		<li class="comment" data-comment=${index}>
-		<div class="comment-header">
-		  <div>${comment.name}</div>
-		  <div>${comment.date}</div>
-		</div>
-		<div class="comment-body">
-		  <div class="comment-text">${comment.text}</div>
-		</div>
-		<div class="comment-footer">
-		  <div class="likes">
-			 <span class="likes-counter" data-likeCounter = "${comment.likesCounter}">${comment.likesCounter}</span>
-			 <button class="like-button"></button>
-			 <button class="edit-button"></button>
-			 <button class="delete-button" data-index="${index}"></button>
-		  </div>
-		</div>
-	 </li>`
+
+	const commentsHtml = comments.map((comment, index) => {
+		
+			return `
+			<li class="comment" data-comment=${index}>
+			<div class="comment-header">
+			  <div>${comment.name}</div>
+			  <div>${comment.date}</div>
+			</div>
+			<div class="comment-body">
+			  <div class="comment-text">${comment.text}</div>
+			</div>
+			<div class="comment-footer">
+			  <div class="likes">
+				 <span class="likes-counter" data-likeCounter = "${comment.likesCounter}">${comment.likesCounter}</span>
+				 <button class="like-button"></button>
+				 <button class="edit-button"></button>
+				 <button class="delete-button" data-index="${index}"></button>
+			  </div>
+			</div>
+		 </li>`
+		
 	})
 
 	listComments.innerHTML = commentsHtml.join('');
 	initLikeButtonEventListeners();
 	initEditButtonEventListeners();
 	initDeleteButtonEventListeners();
-	initAnswerCommentEventListener()
+	initAnswerCommentEventListener();
 }
 
 //Подписка на события клика по кнопке Лайк
 function initLikeButtonEventListeners() {
 	const likeButtons = listComments.querySelectorAll('.like-button');
-	
-	for(const likeButton of likeButtons) {
+
+	for (const likeButton of likeButtons) {
 		likeButton.addEventListener('click', (event) => {
 			event.stopPropagation();
 			const target = event.target;
 			const likesParrent = target.closest('.likes');
 			const likesCounter = likesParrent.querySelector('.likes-counter')
 
-			if(!likeButton.matches('.-active-like')) {
+			if (!likeButton.matches('.-active-like')) {
 				likeButton.classList.add('-active-like');
 				likesCounter.dataset.likecounter = +likesCounter.dataset.likecounter + 1;
-				likesCounter.textContent = likesCounter.dataset.likecounter;				
+				likesCounter.textContent = likesCounter.dataset.likecounter;
 			} else {
 				likeButton.classList.remove('-active-like');
 				likesCounter.dataset.likecounter = +likesCounter.dataset.likecounter - 1;
@@ -196,7 +209,7 @@ function initDeleteButtonEventListeners() {
 		deleteButton.addEventListener('click', (event) => {
 			event.stopPropagation();
 			const index = deleteButton.dataset.index;
-			comments.splice(index,1);
+			comments.splice(index, 1);
 			renderComments();
 		})
 
@@ -207,18 +220,21 @@ function initDeleteButtonEventListeners() {
 function initAnswerCommentEventListener() {
 	const commentElements = document.querySelectorAll('.comment');
 
-	for(const commentElement of commentElements) {
-		commentElement.addEventListener('click',(event)=> {
+	for (const commentElement of commentElements) {
+		commentElement.addEventListener('click', (event) => {
 			const index = commentElement.dataset.comment;
 
-			const quote = `> ${comments[index].text}\n\n${comments[index].name},`;
+			quoteBlock = `/** ${comments[index].name}:\n${comments[index].text} **/`;
 
-			inputComment.value = quote;
+			inputComment.value = `${quoteBlock}\n\n`;
+
+			inputComment.focus();
 		})
 	}
 }
 
 renderComments();
+
 initialState();
 
 formButton.addEventListener('click', handlerAddComment);
@@ -232,7 +248,7 @@ form.addEventListener('keyup', (event) => {
 
 //Подписка на активность/неактивность кнопки "Написать"
 form.addEventListener('input', () => {
-		if (inputName.value && inputComment.value) {
+	if (inputName.value && inputComment.value) {
 		formButton.disabled = false;
 		formButton.classList.remove('button-disabled')
 	} else {

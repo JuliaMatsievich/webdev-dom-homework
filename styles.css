@@ -195,6 +195,10 @@ body {
   .quote {
     background: white;
     color: black;
-    padding: 5px;
+    padding: 10px;
+    border-radius: 5px;
     margin-top: 20px;
+    margin-bottom: 20px;
+    white-space: pre-line;
+    font-size: 20px;
   }

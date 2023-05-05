@@ -4,9 +4,6 @@ const inputComment = form.querySelector('.add-form-text');
 const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
-let quote = '';
-let quoteBlock = '';
-let quoteArray = [];
 
 const comments = [
 	{
@@ -112,17 +109,18 @@ function renderEditComment(element) {
 	const parent = element.closest('.comment');
 	const commentBody = parent.querySelector('.comment-body');
 	const commentText = parent.querySelector('.comment-text');
-	console.log(commentText.textContent);
+	const divQuote = commentText.querySelector('.quote');
+	const editTextarea = commentText.innerHTML.replaceAll('<div class="quote">','/**').replaceAll('</div>','**/');
 	commentBody.innerHTML = `
 	<div class="edit-form">
-	<textarea type="textarea" class="edit-form-text" rows="4">${commentText.textContent}</textarea>
+	<textarea type="textarea" class="edit-form-text" rows="4">${editTextarea}</textarea>
 	<div class="add-form-row">
 	  <button class="edit-form-button">Сохранить</button>
 	</div>
 	</div>
 	`
-
 	const editForm = parent.querySelector('.edit-form');
+	
 	editForm.addEventListener('click', (event) => {
 		event.stopImmediatePropagation()
 	})
@@ -130,16 +128,25 @@ function renderEditComment(element) {
 	const editButtonSave = parent.querySelector('.edit-form-button');
 	const commentIndex = parent.dataset.comment;
 
+
+
+
 	editButtonSave.addEventListener('click', (event) => {
 		event.stopPropagation();
 		if (!newCommentText.value) {
 			showError(commentBody);
 			return;
 		}
-		commentBody.innerHTML = `
-		<div class="comment-text">${newCommentText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</div>
-		`
-		comments[commentIndex].text = newCommentText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
+		const newCommentTextValue = newCommentText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("/**", "<div class='quote'>").replaceAll("**/", "</div>");
+
+		if(divQuote) {
+			commentBody.innerHTML = `<div class="comment-text">${newCommentTextValue}</div>`
+		} else {
+		commentBody.innerHTML = `<div class="comment-text">${newCommentTextValue}</div>`
+		}
+
+		comments[commentIndex].text = newCommentTextValue;
 	})
 }
 

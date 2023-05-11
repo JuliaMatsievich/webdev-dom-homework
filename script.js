@@ -20,25 +20,30 @@ let comments = [
 	// }
 ]
 
-fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
-	method: 'GET'
-})
-.then(response => {
-	response.json()
-	.then(responseData => {
-		const appcomments = responseData.comments.map((comment) => {
-			return {
-				name: comment.author.name,
-				date: renderDate(comment.date),
-				text: comment.text,
-				likes: comment.likes,
-				isLiked: false
-			}
-		}) 
-		comments = appcomments;
-		renderComments();
+function fetchGet() {
+		
+	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
+		method: 'GET'
 	})
-})
+	.then(response => {
+		response.json()
+		.then(responseData => {
+			const appcomments = responseData.comments.map((comment) => {
+				return {
+					name: comment.author.name,
+					date: renderDate(comment.date),
+					text: comment.text,
+					likes: comment.likes,
+					isLiked: false
+				}
+			}) 
+			comments = appcomments;
+			renderComments();
+		})
+	})
+
+}
+fetchGet();
 
 //Создание даты в нужном формате
 function renderDate(dataDate) {
@@ -94,7 +99,20 @@ function handlerAddComment() {
 	}
 	const date = renderDate();
 
-	comments.push({
+	// comments.push({
+	// 	name: inputName.value.
+	// 		replaceAll("<", "&lt;").
+	// 		replaceAll(">", "&gt;"),
+	// 	date: date,
+	// 	text: inputComment.value.
+	// 		replaceAll("<", "&lt;").
+	// 		replaceAll(">", "&gt;").
+	// 		replaceAll("/**", "<div class='quote'>").
+	// 		replaceAll("**/", "</div>"),
+	// 	likes: 0,
+	// })
+
+	let newComment = {
 		name: inputName.value.
 			replaceAll("<", "&lt;").
 			replaceAll(">", "&gt;"),
@@ -104,10 +122,28 @@ function handlerAddComment() {
 			replaceAll(">", "&gt;").
 			replaceAll("/**", "<div class='quote'>").
 			replaceAll("**/", "</div>"),
-		likesCounter: 0,
-	})
+		likes: 0,
+	}
 
-	renderComments();
+	//Обработка запроса POST
+	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
+		method: 'POST',
+		body: JSON.stringify(newComment)
+	})
+	.then(response => {
+		response.json()
+		.then(responseData => {
+			comments = responseData.comments;
+			fetchGet()
+
+
+			// renderComments();
+		})
+		})
+
+
+
+	
 	initialState();
 }
 
@@ -264,6 +300,7 @@ renderComments();
 
 initialState();
 
+//Подписка на событие клика по кнопке "Добавить комментарий"
 formButton.addEventListener('click', handlerAddComment);
 
 //Подписка на создание комментария нажатием клавиши Enter

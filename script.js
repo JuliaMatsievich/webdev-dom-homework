@@ -4,7 +4,6 @@ const inputComment = form.querySelector('.add-form-text');
 const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
-// const buttonDelete = document.querySelector('.button-delete');
 
 const comments = [
 	{
@@ -44,9 +43,9 @@ function showError(element) {
 //Спрятать ошибку
 function hideError() {
 	const divError = document.querySelector('.error');
-	if(divError) {
+	if (divError) {
 		divError.remove();
-	}	
+	}
 }
 
 //Проверка на валидность полей ввода
@@ -63,7 +62,7 @@ function initialState() {
 	inputName.value = '';
 	inputComment.value = '';
 	formButton.disabled = true;
-	formButton.classList.add('button-disabled')
+	formButton.classList.add('button-disabled');
 }
 
 // Обработка добавления комментария
@@ -76,14 +75,19 @@ function handlerAddComment() {
 	const date = renderDate();
 
 	comments.push({
-		name: inputName.value,
+		name: inputName.value.
+			replaceAll("<", "&lt;").
+			replaceAll(">", "&gt;"),
 		date: date,
-		text: inputComment.value,
+		text: inputComment.value.
+			replaceAll("<", "&lt;").
+			replaceAll(">", "&gt;").
+			replaceAll("/**", "<div class='quote'>").
+			replaceAll("**/", "</div>"),
 		likesCounter: 0,
 	})
 
 	renderComments();
-
 	initialState();
 }
 
@@ -91,86 +95,109 @@ function handlerAddComment() {
 function initEditButtonEventListeners() {
 	const EditButtons = listComments.querySelectorAll('.edit-button');
 
-	for(const EditButton of EditButtons) {
-		EditButton.addEventListener('click',(event) => {
+	for (const EditButton of EditButtons) {
+		EditButton.addEventListener('click', (event) => {
+			event.stopPropagation();
 			const target = event.target;
-			renderEditComment (target)
+			renderEditComment(target)
 		})
 	}
 }
 
 //Создание формы редактирования комментария
-function renderEditComment (element) {
+function renderEditComment(element) {
 	const parent = element.closest('.comment');
 	const commentBody = parent.querySelector('.comment-body');
 	const commentText = parent.querySelector('.comment-text');
+	const divQuote = commentText.querySelector('.quote');
+	const editTextarea = commentText.innerHTML.replaceAll('<div class="quote">','/**').replaceAll('</div>','**/');
 	commentBody.innerHTML = `
 	<div class="edit-form">
-	<textarea type="textarea" class="edit-form-text" rows="4">${commentText.textContent}</textarea>
+	<textarea type="textarea" class="edit-form-text" rows="4">${editTextarea}</textarea>
 	<div class="add-form-row">
 	  <button class="edit-form-button">Сохранить</button>
 	</div>
 	</div>
 	`
+	const editForm = parent.querySelector('.edit-form');
+	
+	editForm.addEventListener('click', (event) => {
+		event.stopImmediatePropagation()
+	})
 	const newCommentText = parent.querySelector('.edit-form-text');
 	const editButtonSave = parent.querySelector('.edit-form-button');
+	const commentIndex = parent.dataset.comment;
 
-	editButtonSave.addEventListener('click',() => {
-		if(!newCommentText.value) {
+
+
+
+	editButtonSave.addEventListener('click', (event) => {
+		event.stopPropagation();
+		if (!newCommentText.value) {
 			showError(commentBody);
 			return;
 		}
-		commentBody.innerHTML = `
-		<div class="comment-text">${newCommentText.value}</div>
-		`
+
+		const newCommentTextValue = newCommentText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("/**", "<div class='quote'>").replaceAll("**/", "</div>");
+
+		if(divQuote) {
+			commentBody.innerHTML = `<div class="comment-text">${newCommentTextValue}</div>`
+		} else {
+		commentBody.innerHTML = `<div class="comment-text">${newCommentTextValue}</div>`
+		}
+
+		comments[commentIndex].text = newCommentTextValue;
 	})
-
-
 }
 
 //Рендер комментариев
 function renderComments() {
-	const commentsHtml = comments.map((comment,index) => {
-		return `
-		<li class="comment">
-		<div class="comment-header">
-		  <div>${comment.name}</div>
-		  <div>${comment.date}</div>
-		</div>
-		<div class="comment-body">
-		  <div class="comment-text">${comment.text}</div>
-		</div>
-		<div class="comment-footer">
-		  <div class="likes">
-			 <span class="likes-counter" data-likeCounter = "${comment.likesCounter}">${comment.likesCounter}</span>
-			 <button class="like-button"></button>
-			 <button class="edit-button"></button>
-			 <button class="delete-button" data-index="${index}"></button>
-		  </div>
-		</div>
-	 </li>`
+
+	const commentsHtml = comments.map((comment, index) => {
+		
+			return `
+			<li class="comment" data-comment=${index}>
+			<div class="comment-header">
+			  <div>${comment.name}</div>
+			  <div>${comment.date}</div>
+			</div>
+			<div class="comment-body">
+			  <div class="comment-text">${comment.text}</div>
+			</div>
+			<div class="comment-footer">
+			  <div class="likes">
+				 <span class="likes-counter" data-likeCounter = "${comment.likesCounter}">${comment.likesCounter}</span>
+				 <button class="like-button"></button>
+				 <button class="edit-button"></button>
+				 <button class="delete-button" data-index="${index}"></button>
+			  </div>
+			</div>
+		 </li>`
+		
 	})
 
 	listComments.innerHTML = commentsHtml.join('');
 	initLikeButtonEventListeners();
 	initEditButtonEventListeners();
 	initDeleteButtonEventListeners();
+	initAnswerCommentEventListener();
 }
 
 //Подписка на события клика по кнопке Лайк
 function initLikeButtonEventListeners() {
 	const likeButtons = listComments.querySelectorAll('.like-button');
-	
-	for(const likeButton of likeButtons) {
-		likeButton.addEventListener('click', (event) => {	
+
+	for (const likeButton of likeButtons) {
+		likeButton.addEventListener('click', (event) => {
+			event.stopPropagation();
 			const target = event.target;
 			const likesParrent = target.closest('.likes');
 			const likesCounter = likesParrent.querySelector('.likes-counter')
 
-			if(!likeButton.matches('.-active-like')) {
+			if (!likeButton.matches('.-active-like')) {
 				likeButton.classList.add('-active-like');
 				likesCounter.dataset.likecounter = +likesCounter.dataset.likecounter + 1;
-				likesCounter.textContent = likesCounter.dataset.likecounter;				
+				likesCounter.textContent = likesCounter.dataset.likecounter;
 			} else {
 				likeButton.classList.remove('-active-like');
 				likesCounter.dataset.likecounter = +likesCounter.dataset.likecounter - 1;
@@ -186,37 +213,49 @@ function initDeleteButtonEventListeners() {
 	const deleteButtons = document.querySelectorAll('.delete-button');
 
 	for (const deleteButton of deleteButtons) {
-		deleteButton.addEventListener('click', () => {
+		deleteButton.addEventListener('click', (event) => {
+			event.stopPropagation();
 			const index = deleteButton.dataset.index;
-			comments.splice(index,1);
+			comments.splice(index, 1);
 			renderComments();
 		})
 
 	}
-	// listComments.addEventListener('click',(event) => {
-	// 	const target = event.target;
-	// 	if(!target.matches('.delete-button')) return;
+}
 
-	// 	const index = target.dataset.index;
-	// 	console.log(index);
-	// 	console.log(target);
-	// })
+//Подписка на событие ответить на комментарий
+function initAnswerCommentEventListener() {
+	const commentElements = document.querySelectorAll('.comment');
+
+	for (const commentElement of commentElements) {
+		commentElement.addEventListener('click', (event) => {
+			const index = commentElement.dataset.comment;
+
+			quoteBlock = `/** ${comments[index].name}:\n${comments[index].text} **/`;
+
+			inputComment.value = `${quoteBlock}\n\n`;
+
+			inputComment.focus();
+		})
+	}
 }
 
 renderComments();
+
 initialState();
 
 formButton.addEventListener('click', handlerAddComment);
 
+//Подписка на создание комментария нажатием клавиши Enter
 form.addEventListener('keyup', (event) => {
 	if (event.key == 'Enter') {
 		handlerAddComment();
 	}
 });
 
-
+//Подписка на активность/неактивность кнопки "Написать"
 form.addEventListener('input', () => {
-		if (inputName.value && inputComment.value) {
+	if (inputName.value && inputComment.value) {
 		formButton.disabled = false;
 		formButton.classList.remove('button-disabled')
 	} else {
@@ -225,7 +264,3 @@ form.addEventListener('input', () => {
 	}
 })
 
-// buttonDelete.addEventListener('click', () => {
-// 	let comment = '<li class="comment">';
-// 	listComments.innerHTML = listComments.innerHTML.slice(0,listComments.innerHTML.lastIndexOf(comment))
-// })

@@ -5,24 +5,44 @@ const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
 
-const comments = [
-	{
-		name: 'Глеб Фокин',
-		date: '12.02.22 12:18',
-		text: 'Это будет первый комментарий на этой странице',
-		likesCounter: 3,
-	},
-	{
-		name: 'Варвара Н.',
-		date: '13.02.22 19:22',
-		text: 'Мне нравится как оформлена эта страница! ❤',
-		likesCounter: 75,
-	}
+let comments = [
+	// {
+	// 	name: 'Глеб Фокин',
+	// 	date: '12.02.22 12:18',
+	// 	text: 'Это будет первый комментарий на этой странице',
+	// 	likesCounter: 3,
+	// },
+	// {
+	// 	name: 'Варвара Н.',
+	// 	date: '13.02.22 19:22',
+	// 	text: 'Мне нравится как оформлена эта страница! ❤',
+	// 	likesCounter: 75,
+	// }
 ]
 
+fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
+	method: 'GET'
+})
+.then(response => {
+	response.json()
+	.then(responseData => {
+		const appcomments = responseData.comments.map((comment) => {
+			return {
+				name: comment.author.name,
+				date: renderDate(comment.date),
+				text: comment.text,
+				likes: comment.likes,
+				isLiked: false
+			}
+		}) 
+		comments = appcomments;
+		renderComments();
+	})
+})
+
 //Создание даты в нужном формате
-function renderDate() {
-	const date = new Date();
+function renderDate(dataDate) {
+	const date = new Date(dataDate);
 	const dateDataArr = date.toLocaleDateString().split('.')
 	dateDataArr[dateDataArr.length - 1] = dateDataArr[dateDataArr.length - 1].slice(2);
 	const dateData = dateDataArr.join('.');
@@ -166,7 +186,7 @@ function renderComments() {
 			</div>
 			<div class="comment-footer">
 			  <div class="likes">
-				 <span class="likes-counter" data-likeCounter = "${comment.likesCounter}">${comment.likesCounter}</span>
+				 <span class="likes-counter" data-likeCounter = "${comment.likes}">${comment.likes}</span>
 				 <button class="like-button"></button>
 				 <button class="edit-button"></button>
 				 <button class="delete-button" data-index="${index}"></button>

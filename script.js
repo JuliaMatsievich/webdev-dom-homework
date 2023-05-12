@@ -1,31 +1,22 @@
+const container = document.querySelector('.container');
 const form = document.querySelector('.add-form');
 const inputName = form.querySelector('.add-form-name');
 const inputComment = form.querySelector('.add-form-text');
 const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
+const loading = document.querySelector('.load');
 
-let comments = [
-	// {
-	// 	name: 'Глеб Фокин',
-	// 	date: '12.02.22 12:18',
-	// 	text: 'Это будет первый комментарий на этой странице',
-	// 	likesCounter: 3,
-	// },
-	// {
-	// 	name: 'Варвара Н.',
-	// 	date: '13.02.22 19:22',
-	// 	text: 'Мне нравится как оформлена эта страница! ❤',
-	// 	likesCounter: 75,
-	// }
-]
+let comments = [];
 
+// Функция запроса GET
 function fetchGet() {
 		
 	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
 		method: 'GET'
 	})
 	.then(response => {
+		removerLoading();
 		response.json()
 		.then(responseData => {
 			const appcomments = responseData.comments.map((comment) => {
@@ -43,7 +34,23 @@ function fetchGet() {
 	})
 
 }
-fetchGet();
+
+// Функция запроса POST
+function fetchPost(newComment) {
+	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
+		method: 'POST',
+		body: JSON.stringify(newComment)
+	})
+	.then(response => {
+		response.json()
+		.then(responseData => {
+			comments = responseData.comments;
+			fetchGet()
+		})
+		})
+}
+
+
 
 //Создание даты в нужном формате
 function renderDate(dataDate) {
@@ -99,19 +106,6 @@ function handlerAddComment() {
 	}
 	const date = renderDate();
 
-	// comments.push({
-	// 	name: inputName.value.
-	// 		replaceAll("<", "&lt;").
-	// 		replaceAll(">", "&gt;"),
-	// 	date: date,
-	// 	text: inputComment.value.
-	// 		replaceAll("<", "&lt;").
-	// 		replaceAll(">", "&gt;").
-	// 		replaceAll("/**", "<div class='quote'>").
-	// 		replaceAll("**/", "</div>"),
-	// 	likes: 0,
-	// })
-
 	let newComment = {
 		name: inputName.value.
 			replaceAll("<", "&lt;").
@@ -124,40 +118,10 @@ function handlerAddComment() {
 			replaceAll("**/", "</div>"),
 		likes: 0,
 	}
-
-	//Обработка запроса POST
-	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
-		method: 'POST',
-		body: JSON.stringify(newComment)
-	})
-	.then(response => {
-		response.json()
-		.then(responseData => {
-			comments = responseData.comments;
-			fetchGet()
-
-
-			// renderComments();
-		})
-		})
-
-
-
 	
+	fetchPost(newComment)
+	renderLoading();
 	initialState();
-}
-
-// Подписка на события кнопки Редактировать
-function initEditButtonEventListeners() {
-	const EditButtons = listComments.querySelectorAll('.edit-button');
-
-	for (const EditButton of EditButtons) {
-		EditButton.addEventListener('click', (event) => {
-			event.stopPropagation();
-			const target = event.target;
-			renderEditComment(target)
-		})
-	}
 }
 
 //Создание формы редактирования комментария
@@ -183,9 +147,6 @@ function renderEditComment(element) {
 	const newCommentText = parent.querySelector('.edit-form-text');
 	const editButtonSave = parent.querySelector('.edit-form-button');
 	const commentIndex = parent.dataset.comment;
-
-
-
 
 	editButtonSave.addEventListener('click', (event) => {
 		event.stopPropagation();
@@ -237,6 +198,32 @@ function renderComments() {
 	initEditButtonEventListeners();
 	initDeleteButtonEventListeners();
 	initAnswerCommentEventListener();
+}
+
+//Рендер загрузки
+function renderLoading() {
+	form.classList.add('hidden');
+	loading.classList.remove('hidden');
+}
+
+//Убрать загрузку
+function removerLoading() {
+	form.classList.remove('hidden');
+	loading.classList.add('hidden');
+}
+
+
+// Подписка на события кнопки Редактировать
+function initEditButtonEventListeners() {
+	const EditButtons = listComments.querySelectorAll('.edit-button');
+
+	for (const EditButton of EditButtons) {
+		EditButton.addEventListener('click', (event) => {
+			event.stopPropagation();
+			const target = event.target;
+			renderEditComment(target)
+		})
+	}
 }
 
 //Подписка на события клика по кнопке Лайк
@@ -296,9 +283,7 @@ function initAnswerCommentEventListener() {
 	}
 }
 
-renderComments();
-
-initialState();
+fetchGet();
 
 //Подписка на событие клика по кнопке "Добавить комментарий"
 formButton.addEventListener('click', handlerAddComment);

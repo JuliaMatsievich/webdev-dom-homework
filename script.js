@@ -240,39 +240,17 @@ function initLikeButtonEventListeners() {
 			const target = event.target;
 			const commentParrent = target.closest('.comment');
 			const commentId = commentParrent.dataset.comment;
+			likeButton.classList.add('-loading-like');
 			
-			comments[commentId].likes = comments[commentId].isLiked ? comments[commentId].likes -= 1 : comments[commentId].likes += 1;
-			comments[commentId].isLiked = !comments[commentId].isLiked;
-			renderComments()
-
-
-			// delay(2000).then(() => {
-
-
-			// 	const target = event.target;
-			// 	const likesParrent = target.closest('.likes');
-			// 	const likesCounter = likesParrent.querySelector('.likes-counter')
-
-			// 	if (!likeButton.matches('.-active-like')) {
-			// 		likeButton.classList.add('-active-like');
-			// 		likesCounter.dataset.likecounter = +likesCounter.dataset.likecounter + 1;
-			// 		likesCounter.textContent = likesCounter.dataset.likecounter;
-			// 	} else {
-			// 		likeButton.classList.remove('-active-like');
-			// 		likesCounter.dataset.likecounter = +likesCounter.dataset.likecounter - 1;
-			// 		likesCounter.textContent = likesCounter.dataset.likecounter;
-			// 	}
-
-			// 	// comment.likes = comment.isLiked
-			// 	//   ? comment.likes - 1
-			// 	//   : comment.likes + 1;
-			// 	// comment.isLiked = !comment.isLiked;
-			// 	// comment.isLikeLoading = false;
-			// 	// renderComments();
-			//  });
+			delay(2000).then(() => {
+				comments[commentId].likes = comments[commentId].isLiked ? comments[commentId].likes -= 1 : comments[commentId].likes += 1;
+				comments[commentId].isLiked = !comments[commentId].isLiked;
+				renderComments()
+			  });
 		})
 	}
 }
+
 
 //Подписка на кнопку Удалить комменатрий
 function initDeleteButtonEventListeners() {

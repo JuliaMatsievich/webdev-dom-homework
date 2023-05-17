@@ -15,8 +15,7 @@ function fetchGet() {
 	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
 		method: 'GET'
 	})
-		.then(response => {
-			removerLoading();
+		.then(response => {			
 			return response.json()
 		})
 		.then(responseData => {
@@ -31,6 +30,7 @@ function fetchGet() {
 			})
 			comments = appcomments;
 			renderComments();
+			removerLoading();
 		})
 }
 
@@ -46,8 +46,6 @@ function fetchPost(newComment) {
 			fetchGet()
 		})
 }
-
-
 
 //Создание даты в нужном формате
 function renderDate(dataDate) {
@@ -96,6 +94,7 @@ function initialState() {
 
 // Обработка добавления комментария
 function handlerAddComment() {
+	
 	hideError();
 	if (!isValid()) {
 		showError(form);
@@ -115,9 +114,8 @@ function handlerAddComment() {
 			replaceAll("**/", "</div>"),
 		likes: 0,
 	}
-
-	fetchPost(newComment)
-	renderLoading('<img src="./img/Reload-1.9s-197px.gif" alt="" >');
+	
+	fetchPost(newComment);
 	initialState();
 }
 
@@ -294,10 +292,10 @@ function delay(interval = 300) {
 	});
 }
 
-renderLoading('Подождите, пожалуйста, комментарии загружаются');
+renderLoading('Подождите, пожалуйста, комментарии загружаются...');
 fetchGet();
 
-//Подписка на событие клика по кнопке "Добавить комментарий"
+//Подписка на событие клика по кнопке "Написать"
 formButton.addEventListener('click', handlerAddComment);
 
 //Подписка на создание комментария нажатием клавиши Enter

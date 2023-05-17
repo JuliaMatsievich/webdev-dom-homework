@@ -17,8 +17,9 @@ function fetchGet() {
 	})
 	.then(response => {
 		removerLoading();
-		response.json()
-		.then(responseData => {
+		return response.json()
+	})
+	.then(responseData => {
 			const appcomments = responseData.comments.map((comment) => {
 				return {
 					name: comment.author.name,
@@ -30,9 +31,7 @@ function fetchGet() {
 			}) 
 			comments = appcomments;
 			renderComments();
-		})
 	})
-
 }
 
 // Функция запроса POST
@@ -41,13 +40,11 @@ function fetchPost(newComment) {
 		method: 'POST',
 		body: JSON.stringify(newComment)
 	})
-	.then(response => {
-		response.json()
-		.then(responseData => {
+	.then(response => response.json() )
+	.then(responseData => {
 			comments = responseData.comments;
 			fetchGet()
-		})
-		})
+	})
 }
 
 
@@ -120,7 +117,7 @@ function handlerAddComment() {
 	}
 	
 	fetchPost(newComment)
-	renderLoading();
+	renderLoading('<img src="./img/Reload-1.9s-197px.gif" alt="" >');
 	initialState();
 }
 
@@ -201,9 +198,10 @@ function renderComments() {
 }
 
 //Рендер загрузки
-function renderLoading() {
+function renderLoading(innerContent) {
 	form.classList.add('hidden');
 	loading.classList.remove('hidden');
+	loading.innerHTML = innerContent;
 }
 
 //Убрать загрузку
@@ -262,7 +260,6 @@ function initDeleteButtonEventListeners() {
 			comments.splice(index, 1);
 			renderComments();
 		})
-
 	}
 }
 
@@ -283,6 +280,7 @@ function initAnswerCommentEventListener() {
 	}
 }
 
+renderLoading('Подождите, пожалуйста, комментарии загружаются');
 fetchGet();
 
 //Подписка на событие клика по кнопке "Добавить комментарий"

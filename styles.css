@@ -28,7 +28,8 @@ body {
   }
 
   .comment,
-  .add-form {
+  .add-form
+  {
     width: 596px;
     box-sizing: border-box;
     background: radial-gradient(
@@ -201,4 +202,8 @@ body {
     margin-bottom: 20px;
     white-space: pre-line;
     font-size: 20px;
+  }
+
+  .hidden {
+    display: none;
   }

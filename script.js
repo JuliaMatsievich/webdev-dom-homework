@@ -280,6 +280,16 @@ function initAnswerCommentEventListener() {
 	}
 }
 
+
+// Функция для имитации запросов в API
+function delay(interval = 300) {
+	return new Promise((resolve) => {
+	  setTimeout(() => {
+		 resolve();
+	  }, interval);
+	});
+}
+
 renderLoading('Подождите, пожалуйста, комментарии загружаются');
 fetchGet();
 

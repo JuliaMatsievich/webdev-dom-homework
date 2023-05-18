@@ -30,7 +30,7 @@ function fetchGet() {
 			})
 			comments = appcomments;
 			renderComments();
-			// removerLoading();
+			removerLoading();
 		})
 }
 
@@ -94,8 +94,6 @@ function initialState() {
 
 // Обработка добавления комментария
 function handlerAddComment() {
-	renderLoading('Комменатрий добавляется...')
-	// loading.textContent = 'Комменатрий добавляется...';
 	hideError();
 	if (!isValid()) {
 		showError(form);
@@ -117,6 +115,7 @@ function handlerAddComment() {
 	}
 	
 	fetchPost(newComment);
+	renderLoading();
 	initialState();
 }
 
@@ -202,10 +201,9 @@ function renderComments() {
 }
 
 //Рендер загрузки
-function renderLoading(innerContent) {
+function renderLoading() {
 	form.classList.add('hidden');
 	loading.classList.remove('hidden');
-	loading.innerHTML = innerContent;
 }
 
 //Убрать загрузку
@@ -294,7 +292,8 @@ function delay(interval = 300) {
 }
 
 // renderLoading('Подождите, пожалуйста, комментарии загружаются...');
-listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...'
+listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
+initialState();
 fetchGet();
 
 //Подписка на событие клика по кнопке "Написать"

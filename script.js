@@ -17,7 +17,10 @@ function fetchGet() {
 	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
 		method: 'GET'
 	})
-		.then(response => {			
+		.then(response => {
+			if(response.status === 500) {
+				throw new Error('код 500');
+			}
 			return response.json()
 		})
 		.then(responseData => {
@@ -27,16 +30,21 @@ function fetchGet() {
 					date: renderDate(comment.date),
 					text: comment.text,
 					likes: comment.likes,
-					isLiked: false
+					isLiked: false,
+					forceError: true
 				}
 			})
 			comments = appcomments;
 			renderComments();
 			removerLoading();
 		})
+		.catch(err => {
+			if(error.message === 'код 500') {
+				fetchGet();
+			}
+			alert('Кажется, у вас сломался интернет, попробуйте позже')
+		})
 }
-
-let nameInp = '';
 
 // Функция запроса POST
 function fetchPost(newComment) {
@@ -47,6 +55,9 @@ function fetchPost(newComment) {
 		.then(response => {
 			if(response.status === 400) {
 				throw new Error('код 400');
+			}
+			if(response.status === 500) {
+				throw new Error('код 500');
 			}
 			return response.json();
 		})
@@ -62,7 +73,13 @@ function fetchPost(newComment) {
 				alert('Имя и комментарий должны быть не менее 3х символов');
 				return;
 			}
-			console.log(error);
+			if(error.message === 'код 500') {
+				fetchPost(newComment);
+				initialState();
+			} else {
+				alert('Кажется, у вас сломался интернет, попробуйте позже')
+				console.log(error);				
+			}
 		})
 }
 
@@ -134,6 +151,7 @@ function handlerAddComment() {
 			replaceAll("/**", "<div class='quote'>").
 			replaceAll("**/", "</div>"),
 		likes: 0,
+		forceError: true
 	}
 	
 	fetchPost(newComment);

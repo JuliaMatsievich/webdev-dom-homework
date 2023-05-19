@@ -11,13 +11,13 @@ let comments = [];
 
 // Функция запроса GET
 function fetchGet() {
-		
+
 	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
 		method: 'GET'
 	})
-	.then(response => {
-		removerLoading();
-		response.json()
+		.then(response => {			
+			return response.json()
+		})
 		.then(responseData => {
 			const appcomments = responseData.comments.map((comment) => {
 				return {
@@ -27,12 +27,11 @@ function fetchGet() {
 					likes: comment.likes,
 					isLiked: false
 				}
-			}) 
+			})
 			comments = appcomments;
 			renderComments();
+			removerLoading();
 		})
-	})
-
 }
 
 // Функция запроса POST
@@ -41,16 +40,12 @@ function fetchPost(newComment) {
 		method: 'POST',
 		body: JSON.stringify(newComment)
 	})
-	.then(response => {
-		response.json()
+		.then(response => response.json())
 		.then(responseData => {
 			comments = responseData.comments;
 			fetchGet()
 		})
-		})
 }
-
-
 
 //Создание даты в нужном формате
 function renderDate(dataDate) {
@@ -119,7 +114,7 @@ function handlerAddComment() {
 		likes: 0,
 	}
 	
-	fetchPost(newComment)
+	fetchPost(newComment);
 	renderLoading();
 	initialState();
 }
@@ -130,7 +125,7 @@ function renderEditComment(element) {
 	const commentBody = parent.querySelector('.comment-body');
 	const commentText = parent.querySelector('.comment-text');
 	const divQuote = commentText.querySelector('.quote');
-	const editTextarea = commentText.innerHTML.replaceAll('<div class="quote">','/**').replaceAll('</div>','**/');
+	const editTextarea = commentText.innerHTML.replaceAll('<div class="quote">', '/**').replaceAll('</div>', '**/');
 	commentBody.innerHTML = `
 	<div class="edit-form">
 	<textarea type="textarea" class="edit-form-text" rows="4">${editTextarea}</textarea>
@@ -140,7 +135,7 @@ function renderEditComment(element) {
 	</div>
 	`
 	const editForm = parent.querySelector('.edit-form');
-	
+
 	editForm.addEventListener('click', (event) => {
 		event.stopImmediatePropagation()
 	})
@@ -157,10 +152,10 @@ function renderEditComment(element) {
 
 		const newCommentTextValue = newCommentText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("/**", "<div class='quote'>").replaceAll("**/", "</div>");
 
-		if(divQuote) {
+		if (divQuote) {
 			commentBody.innerHTML = `<div class="comment-text">${newCommentTextValue}</div>`
 		} else {
-		commentBody.innerHTML = `<div class="comment-text">${newCommentTextValue}</div>`
+			commentBody.innerHTML = `<div class="comment-text">${newCommentTextValue}</div>`
 		}
 
 		comments[commentIndex].text = newCommentTextValue;
@@ -171,8 +166,13 @@ function renderEditComment(element) {
 function renderComments() {
 
 	const commentsHtml = comments.map((comment, index) => {
-		
-			return `
+		comment.likeButtonClass = '';
+
+		if(comment.isLiked) {
+			comment.likeButtonClass = '-active-like';
+		}
+
+		return `
 			<li class="comment" data-comment=${index}>
 			<div class="comment-header">
 			  <div>${comment.name}</div>
@@ -184,13 +184,13 @@ function renderComments() {
 			<div class="comment-footer">
 			  <div class="likes">
 				 <span class="likes-counter" data-likeCounter = "${comment.likes}">${comment.likes}</span>
-				 <button class="like-button"></button>
+				 <button class="like-button ${comment.likeButtonClass}"></button>
 				 <button class="edit-button"></button>
 				 <button class="delete-button" data-index="${index}"></button>
 			  </div>
 			</div>
 		 </li>`
-		
+
 	})
 
 	listComments.innerHTML = commentsHtml.join('');
@@ -228,27 +228,26 @@ function initEditButtonEventListeners() {
 
 //Подписка на события клика по кнопке Лайк
 function initLikeButtonEventListeners() {
+
 	const likeButtons = listComments.querySelectorAll('.like-button');
 
 	for (const likeButton of likeButtons) {
 		likeButton.addEventListener('click', (event) => {
 			event.stopPropagation();
 			const target = event.target;
-			const likesParrent = target.closest('.likes');
-			const likesCounter = likesParrent.querySelector('.likes-counter')
-
-			if (!likeButton.matches('.-active-like')) {
-				likeButton.classList.add('-active-like');
-				likesCounter.dataset.likecounter = +likesCounter.dataset.likecounter + 1;
-				likesCounter.textContent = likesCounter.dataset.likecounter;
-			} else {
-				likeButton.classList.remove('-active-like');
-				likesCounter.dataset.likecounter = +likesCounter.dataset.likecounter - 1;
-				likesCounter.textContent = likesCounter.dataset.likecounter;
-			}
+			const commentParrent = target.closest('.comment');
+			const commentId = commentParrent.dataset.comment;
+			likeButton.classList.add('-loading-like');
+			
+			delay(2000).then(() => {
+				comments[commentId].likes = comments[commentId].isLiked ? comments[commentId].likes -= 1 : comments[commentId].likes += 1;
+				comments[commentId].isLiked = !comments[commentId].isLiked;
+				renderComments()
+			  });
 		})
 	}
 }
+
 
 //Подписка на кнопку Удалить комменатрий
 function initDeleteButtonEventListeners() {
@@ -262,7 +261,6 @@ function initDeleteButtonEventListeners() {
 			comments.splice(index, 1);
 			renderComments();
 		})
-
 	}
 }
 
@@ -283,9 +281,22 @@ function initAnswerCommentEventListener() {
 	}
 }
 
+
+// Функция для имитации запросов в API
+function delay(interval = 300) {
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			resolve();
+		}, interval);
+	});
+}
+
+// renderLoading('Подождите, пожалуйста, комментарии загружаются...');
+listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
+initialState();
 fetchGet();
 
-//Подписка на событие клика по кнопке "Добавить комментарий"
+//Подписка на событие клика по кнопке "Написать"
 formButton.addEventListener('click', handlerAddComment);
 
 //Подписка на создание комментария нажатием клавиши Enter

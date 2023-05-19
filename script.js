@@ -34,16 +34,34 @@ function fetchGet() {
 		})
 }
 
+let nameInp = '';
+
 // Функция запроса POST
 function fetchPost(newComment) {
 	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
 		method: 'POST',
 		body: JSON.stringify(newComment)
 	})
-		.then(response => response.json())
+		.then(response => {
+			if(response.status === 400) {
+				throw new Error('код 400');
+			}
+			return response.json();
+		})
 		.then(responseData => {
 			comments = responseData.comments;
 			fetchGet()
+		})
+		.catch (error => {
+			
+			removerLoading();
+
+			// stateFormAfterError();
+			if(error.message === 'код 400') {
+				alert('Имя и комментарий должны быть не менее 3х символов');
+				return;
+			}
+			console.log(error);
 		})
 }
 
@@ -92,8 +110,20 @@ function initialState() {
 	formButton.classList.add('button-disabled');
 }
 
+//Состояние формы после ошибки
+function stateFormAfterError() {
+	formButton.disabled = true;
+	formButton.classList.add('button-disabled');
+}
+
 // Обработка добавления комментария
 function handlerAddComment() {
+	let inputNameValue = inputName.value;
+	let inputCommentValue = inputComment.value;
+
+	console.log(inputNameValue);
+	console.log(inputCommentValue);
+
 	hideError();
 	if (!isValid()) {
 		showError(form);

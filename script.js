@@ -301,7 +301,7 @@ formButton.addEventListener('click', handlerAddComment);
 
 //Подписка на создание комментария нажатием клавиши Enter
 form.addEventListener('keyup', (event) => {
-	if (event.key == 'Enter') {
+	if (event.key === 'Enter') {
 		handlerAddComment();
 	}
 });

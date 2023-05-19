@@ -6,6 +6,8 @@ const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
 const loading = document.querySelector('.load');
+let inputNameValue = '';
+let inputCommentValue ='';
 
 let comments = [];
 
@@ -53,10 +55,9 @@ function fetchPost(newComment) {
 			fetchGet()
 		})
 		.catch (error => {
-			
 			removerLoading();
-
-			// stateFormAfterError();
+			inputName.value = inputNameValue;
+			inputComment.value = inputCommentValue;
 			if(error.message === 'код 400') {
 				alert('Имя и комментарий должны быть не менее 3х символов');
 				return;
@@ -110,19 +111,10 @@ function initialState() {
 	formButton.classList.add('button-disabled');
 }
 
-//Состояние формы после ошибки
-function stateFormAfterError() {
-	formButton.disabled = true;
-	formButton.classList.add('button-disabled');
-}
-
 // Обработка добавления комментария
 function handlerAddComment() {
-	let inputNameValue = inputName.value;
-	let inputCommentValue = inputComment.value;
-
-	console.log(inputNameValue);
-	console.log(inputCommentValue);
+	inputNameValue = inputName.value;
+	inputCommentValue = inputComment.value;
 
 	hideError();
 	if (!isValid()) {

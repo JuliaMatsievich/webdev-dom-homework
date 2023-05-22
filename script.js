@@ -6,6 +6,8 @@ const formButton = form.querySelector('.add-form-button');
 const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
 const loading = document.querySelector('.load');
+let inputNameValue = '';
+let inputCommentValue ='';
 
 let comments = [];
 
@@ -15,7 +17,10 @@ function fetchGet() {
 	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
 		method: 'GET'
 	})
-		.then(response => {			
+		.then(response => {
+			if(response.status === 500) {
+				throw new Error('код 500');
+			}
 			return response.json()
 		})
 		.then(responseData => {
@@ -25,12 +30,19 @@ function fetchGet() {
 					date: renderDate(comment.date),
 					text: comment.text,
 					likes: comment.likes,
-					isLiked: false
+					isLiked: false,
+					forceError: true
 				}
 			})
 			comments = appcomments;
 			renderComments();
 			removerLoading();
+		})
+		.catch(err => {
+			if(error.message === 'код 500') {
+				fetchGet();
+			}
+			alert('Кажется, у вас сломался интернет, попробуйте позже')
 		})
 }
 
@@ -40,10 +52,34 @@ function fetchPost(newComment) {
 		method: 'POST',
 		body: JSON.stringify(newComment)
 	})
-		.then(response => response.json())
+		.then(response => {
+			if(response.status === 400) {
+				throw new Error('код 400');
+			}
+			if(response.status === 500) {
+				throw new Error('код 500');
+			}
+			return response.json();
+		})
 		.then(responseData => {
 			comments = responseData.comments;
 			fetchGet()
+		})
+		.catch (error => {
+			removerLoading();
+			inputName.value = inputNameValue;
+			inputComment.value = inputCommentValue;
+			if(error.message === 'код 400') {
+				alert('Имя и комментарий должны быть не менее 3х символов');
+				return;
+			}
+			if(error.message === 'код 500') {
+				fetchPost(newComment);
+				initialState();
+			} else {
+				alert('Кажется, у вас сломался интернет, попробуйте позже')
+				console.log(error);				
+			}
 		})
 }
 
@@ -94,6 +130,9 @@ function initialState() {
 
 // Обработка добавления комментария
 function handlerAddComment() {
+	inputNameValue = inputName.value;
+	inputCommentValue = inputComment.value;
+
 	hideError();
 	if (!isValid()) {
 		showError(form);
@@ -112,6 +151,7 @@ function handlerAddComment() {
 			replaceAll("/**", "<div class='quote'>").
 			replaceAll("**/", "</div>"),
 		likes: 0,
+		forceError: true
 	}
 	
 	fetchPost(newComment);
@@ -301,7 +341,7 @@ formButton.addEventListener('click', handlerAddComment);
 
 //Подписка на создание комментария нажатием клавиши Enter
 form.addEventListener('keyup', (event) => {
-	if (event.key == 'Enter') {
+	if (event.key === 'Enter') {
 		handlerAddComment();
 	}
 });

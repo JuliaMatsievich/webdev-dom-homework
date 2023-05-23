@@ -1,3 +1,4 @@
+import { fetchGet } from "./api.js";
 const container = document.querySelector('.container');
 const form = document.querySelector('.add-form');
 const inputName = form.querySelector('.add-form-name');
@@ -7,56 +8,63 @@ const listComments = document.querySelector('.comments');
 const error = document.querySelector('.error');
 const loading = document.querySelector('.load');
 let inputNameValue = '';
-let inputCommentValue ='';
+let inputCommentValue = '';
 
 let comments = [];
 
-// Функция запроса GET
-function fetchGet() {
 
-	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
-		method: 'GET'
-	})
-		.then(response => {
-			if(response.status === 500) {
-				throw new Error('код 500');
-			}
-			return response.json()
-		})
-		.then(responseData => {
-			const appcomments = responseData.comments.map((comment) => {
-				return {
-					name: comment.author.name,
-					date: renderDate(comment.date),
-					text: comment.text,
-					likes: comment.likes,
-					isLiked: false,
-					forceError: true
-				}
-			})
-			comments = appcomments;
-			renderComments();
-			removerLoading();
-		})
-		.catch(err => {
-			if(error.message === 'код 500') {
-				fetchGet();
-			}
-			alert('Кажется, у вас сломался интернет, попробуйте позже')
-		})
-}
+// // Функция запроса GET
+// const fetchGet = () => {
+// 	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
+// 		method: 'GET'
+// 	})
+// 	.then(response => {
+// 		if(response.status === 500) {
+// 			throw new Error('код 500');
+// 		}
+// 		return response.json()
+// 	})
+// .then(responseData => {
+// 			const appcomments = responseData.comments.map((comment) => {
+// 				return {
+// 					name: comment.author.name,
+// 					date: renderDate(comment.date),
+// 					text: comment.text,
+// 					likes: comment.likes,
+// 					isLiked: false,
+// 					forceError: true
+// 				}
+// 			})
+// 			comments = appcomments;
+// 			renderComments();
+// 			removerLoading();
+// 		})
+// 		.catch(err => {
+// 			if(error.message === 'код 500') {
+// 				fetchGet();
+// 			}
+// 			alert('Кажется, у вас сломался интернет, попробуйте позже')
+// 		})
+// 	}
+
+
+
+
+
+
+
 
 // Функция запроса POST
-function fetchPost(newComment) {
+const fetchPost = (newComment) => {
 	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
 		method: 'POST',
 		body: JSON.stringify(newComment)
 	})
 		.then(response => {
-			if(response.status === 400) {
+			if (response.status === 400) {
 				throw new Error('код 400');
 			}
-			if(response.status === 500) {
+			if (response.status === 500) {
 				throw new Error('код 500');
 			}
 			return response.json();
@@ -65,23 +73,27 @@ function fetchPost(newComment) {
 			comments = responseData.comments;
 			fetchGet()
 		})
-		.catch (error => {
+		.catch(error => {
 			removerLoading();
 			inputName.value = inputNameValue;
 			inputComment.value = inputCommentValue;
-			if(error.message === 'код 400') {
+			if (error.message === 'код 400') {
 				alert('Имя и комментарий должны быть не менее 3х символов');
 				return;
 			}
-			if(error.message === 'код 500') {
+			if (error.message === 'код 500') {
 				fetchPost(newComment);
 				initialState();
 			} else {
 				alert('Кажется, у вас сломался интернет, попробуйте позже')
-				console.log(error);				
+				console.log(error);
 			}
 		})
 }
+
+
+
+
 
 //Создание даты в нужном формате
 function renderDate(dataDate) {
@@ -153,7 +165,7 @@ function handlerAddComment() {
 		likes: 0,
 		forceError: true
 	}
-	
+
 	fetchPost(newComment);
 	renderLoading();
 	initialState();
@@ -208,7 +220,7 @@ function renderComments() {
 	const commentsHtml = comments.map((comment, index) => {
 		comment.likeButtonClass = '';
 
-		if(comment.isLiked) {
+		if (comment.isLiked) {
 			comment.likeButtonClass = '-active-like';
 		}
 
@@ -278,12 +290,12 @@ function initLikeButtonEventListeners() {
 			const commentParrent = target.closest('.comment');
 			const commentId = commentParrent.dataset.comment;
 			likeButton.classList.add('-loading-like');
-			
+
 			delay(2000).then(() => {
 				comments[commentId].likes = comments[commentId].isLiked ? comments[commentId].likes -= 1 : comments[commentId].likes += 1;
 				comments[commentId].isLiked = !comments[commentId].isLiked;
 				renderComments()
-			  });
+			});
 		})
 	}
 }
@@ -334,7 +346,24 @@ function delay(interval = 300) {
 // renderLoading('Подождите, пожалуйста, комментарии загружаются...');
 listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
 initialState();
-fetchGet();
+
+
+fetchGet()
+	.then(responseData => {
+		const appcomments = responseData.comments.map((comment) => {
+			return {
+				name: comment.author.name,
+				date: renderDate(comment.date),
+				text: comment.text,
+				likes: comment.likes,
+				isLiked: false,
+				forceError: true
+			}
+		})
+		comments = appcomments;
+		renderComments();
+		removerLoading();
+	})
 
 //Подписка на событие клика по кнопке "Написать"
 formButton.addEventListener('click', handlerAddComment);

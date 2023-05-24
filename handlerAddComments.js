@@ -32,7 +32,6 @@ function isValid() {
 	}
 }
 
-
 // Обработка добавления комментария
 export function handlerAddComment() {
 	inputNameValue = inputName.value;

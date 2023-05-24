@@ -18,7 +18,7 @@ export function fetchGet() {
 		}
 		return response.json()
 	})
-.then(responseData => {
+	.then(responseData => {
 			let appcomments = responseData.comments.map((comment) => {
 				return {
 					name: comment.author.name,

@@ -39,21 +39,6 @@ export function fetchGet() {
 			console.log(error);
 			alert('Кажется, у вас сломался интернет, попробуйте позже')
 		})
-	// return fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
-	// 	method: 'GET'
-	// })
-	// 	.then(response => {
-	// 		if (response.status === 500) {
-	// 			throw new Error('код 500');
-	// 		}
-	// 		return response.json()
-	// 	})
-	// 	.catch(error => {
-	// 		if (error.message === 'код 500') {
-	// 			fetchGet();
-	// 		}
-	// 		alert('Кажется, у вас сломался интернет, попробуйте позже')
-	// 	})
 }
 
 

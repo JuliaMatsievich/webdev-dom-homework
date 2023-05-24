@@ -1,7 +1,7 @@
 import { fetchGet, fetchPost } from "./api.js";
 import { inputName, inputComment, listComments, formButton, form } from "./variables.js";
 import { renderDate } from './render.js';
-import { renderLoading, removerLoading } from "./handlerLoading.js" ;
+import { renderLoading } from "./handlerLoading.js" ;
 
 export let inputNameValue = '';
 export let inputCommentValue = '';
@@ -73,23 +73,6 @@ function handlerAddComment() {
 listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
 initialState();
 fetchGet();
-
-
-	// .then(responseData => {
-	// 	const appcomments = responseData.comments.map((comment) => {
-	// 		return {
-	// 			name: comment.author.name,
-	// 			date: renderDate(comment.date),
-	// 			text: comment.text,
-	// 			likes: comment.likes,
-	// 			isLiked: false,
-	// 			forceError: true
-	// 		}
-	// 	})
-	// 	comments = appcomments;
-	// 	renderComments();
-	// 	removerLoading();
-	// })
 
 //Подписка на событие клика по кнопке "Написать"
 formButton.addEventListener('click', handlerAddComment);

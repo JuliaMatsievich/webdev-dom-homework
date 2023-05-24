@@ -1,4 +1,4 @@
-import { listComments,  } from "./variables.js";
+import { listComments } from "./variables.js";
 import {initEditButtonEventListeners, initLikeButtonEventListeners, initDeleteButtonEventListeners, initAnswerCommentEventListener } from "./eventlisteners.js";
 import { comments } from "./api.js";
 

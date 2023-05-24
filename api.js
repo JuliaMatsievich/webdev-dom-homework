@@ -1,7 +1,8 @@
 import { renderDate, renderComments } from './render.js';
 import { removerLoading } from "./handlerLoading.js" ;
 import { inputName, inputComment } from "./variables.js";
-import { initialState, inputNameValue, inputCommentValue } from './script.js'; 
+import { initialState } from './script.js'; 
+import { inputNameValue, inputCommentValue } from './handlerAddComments.js'
 
 export let comments = [];
 

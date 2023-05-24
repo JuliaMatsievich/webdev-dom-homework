@@ -70,7 +70,7 @@ export function initAnswerCommentEventListener() {
 		commentElement.addEventListener('click', (event) => {
 			const index = commentElement.dataset.comment;
 
-			quoteBlock = `/** ${comments[index].name}:\n${comments[index].text} **/`;
+			let quoteBlock = `/** ${comments[index].name}:\n${comments[index].text} **/`;
 
 			inputComment.value = `${quoteBlock}\n\n`;
 

@@ -1,9 +1,10 @@
 import { renderDate, renderComments } from './render.js';
 import { removerLoading } from "./handlerLoading.js" ;
-import { inputName, inputComment, inputNameValue, inputCommentValue } from "./variables.js";
-import { initialState } from './script.js'; 
+import { inputName, inputComment } from "./variables.js";
+import { initialState, inputNameValue, inputCommentValue } from './script.js'; 
 
 export let comments = [];
+
 
 // Функция запроса GET
 export function fetchGet() {

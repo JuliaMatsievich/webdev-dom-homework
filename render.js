@@ -97,3 +97,54 @@ export function renderComments() {
 	initAnswerCommentEventListener();
 }
 
+
+//Рендер формы добавления комменатриев
+export function renderAddForm () {
+	const addFormHtml = `
+		<div class="add-form">
+			<input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+			<textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+			<div class="add-form-row">
+				<button class="add-form-button button-disabled ">Написать</button>
+		</div>
+	`
+
+	formBlock.innerHTML = addFormHtml;
+}
+
+
+//Рендер формы входа
+export function renderEnterForm () {
+	const enterFormHtml = `
+		<div class="enter-form">
+			<h2 class="enter-title">Форма входа</h2>
+			<input type="text" class="enter-form-login" placeholder="Введите ваш логин" />
+			<input type="text" class="enter-form-password" placeholder="Введите ваш пароль" />
+			<div class="enter-form-row">
+				<button class="enter-form-button button-disabled ">Войти</button>
+			</div>
+			<p class="reg-button">Зарегистрироваться</p>
+		</div>
+	`
+
+	formBlock.innerHTML = enterFormHtml;
+}
+
+
+//Рендер формы регистрации
+export function renderRegisterForm () {
+	const registerFormHtml = `
+		<div class="enter-form">
+			<h2 class="enter-title">Форма регистрации</h2>
+			<input type="text" class="enter-form-name" placeholder="Введите ваше имя" />
+			<input type="text" class="enter-form-login" placeholder="Введите ваш логин" />
+			<input type="text" class="enter-form-password" placeholder="Введите ваш пароль" />
+			<div class="enter-form-row">
+				<button class="enter-form-button button-disabled ">Зарегистрироваться</button>
+			</div>
+			<p class="reg-button">Войти как авторизованный пользователь</p>
+		</div>
+	`
+
+	formBlock.innerHTML = registerFormHtml;
+}

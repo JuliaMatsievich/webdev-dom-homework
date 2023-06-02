@@ -1,6 +1,7 @@
-import { listComments } from "./variables.js";
-import {initEditButtonEventListeners, initLikeButtonEventListeners, initDeleteButtonEventListeners, initAnswerCommentEventListener } from "./eventlisteners.js";
-import { comments } from "./api.js";
+import { listComments, formBlock,autorizationButton } from "./variables.js";
+// import {initEditButtonEventListeners, initLikeButtonEventListeners, initDeleteButtonEventListeners, initAnswerCommentEventListener } from "./eventlisteners.js";
+import { comments, fetchCommentsAndRender } from "./script.js";
+import {initAutorizationEventListener} from "./eventlisteners.js";
 
 //Создание даты в нужном формате
 export function renderDate(dataDate) {
@@ -91,15 +92,15 @@ export function renderComments() {
 	})
 
 	listComments.innerHTML = commentsHtml.join('');
-	initLikeButtonEventListeners();
-	initEditButtonEventListeners();
-	initDeleteButtonEventListeners();
-	initAnswerCommentEventListener();
+	// initLikeButtonEventListeners();
+	// initEditButtonEventListeners();
+	// initDeleteButtonEventListeners();
+	// initAnswerCommentEventListener();
 }
 
 
 //Рендер формы добавления комменатриев
-export function renderAddForm () {
+export function renderAddForm() {
 	const addFormHtml = `
 		<div class="add-form">
 			<input type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -110,11 +111,12 @@ export function renderAddForm () {
 	`
 
 	formBlock.innerHTML = addFormHtml;
+
 }
 
 
 //Рендер формы входа
-export function renderEnterForm () {
+export function renderEnterForm() {
 	const enterFormHtml = `
 		<div class="enter-form">
 			<h2 class="enter-title">Форма входа</h2>
@@ -123,16 +125,33 @@ export function renderEnterForm () {
 			<div class="enter-form-row">
 				<button class="enter-form-button button-disabled ">Войти</button>
 			</div>
-			<p class="reg-button">Зарегистрироваться</p>
+			<div class="enter-form-row">
+				<p class="reg-button">Зарегистрироваться</p>
+				<p class="cancel-button">Вернуться к просмотру комментариев</p>
+			</div
 		</div>
 	`
 
 	formBlock.innerHTML = enterFormHtml;
+
+	const regButton = document.querySelector('.reg-button');
+	const cancelButton = document.querySelector('.cancel-button');
+
+	regButton.addEventListener('click', () => {
+		renderRegisterForm();
+	})
+	cancelButton.addEventListener('click', () => {
+		listComments.classList.remove('hidden');
+		fetchCommentsAndRender();
+		formBlock.innerHTML = `Чтобы добавить комментарий <span class="autorization-button">авторизуйтесь</span>`
+		initAutorizationEventListener();
+	})
+
 }
 
 
 //Рендер формы регистрации
-export function renderRegisterForm () {
+export function renderRegisterForm() {
 	const registerFormHtml = `
 		<div class="enter-form">
 			<h2 class="enter-title">Форма регистрации</h2>
@@ -142,9 +161,15 @@ export function renderRegisterForm () {
 			<div class="enter-form-row">
 				<button class="enter-form-button button-disabled ">Зарегистрироваться</button>
 			</div>
-			<p class="reg-button">Войти как авторизованный пользователь</p>
+			<p class="reg-button-auth">Войти как авторизованный пользователь</p>
 		</div>
 	`
 
 	formBlock.innerHTML = registerFormHtml;
+
+	const regButtonAuth = document.querySelector('.reg-button-auth');
+
+	regButtonAuth.addEventListener('click', () => {
+		renderEnterForm()
+	})
 }

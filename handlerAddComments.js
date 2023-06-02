@@ -1,11 +1,11 @@
-import { inputName, inputComment } from "./variables.js" ;
-import { renderDate } from "./render.js";
-import { initialState } from './script.js'; 
-import { fetchPost } from "./api.js";
-import { renderLoading } from "./handlerLoading.js";
+// import { inputName, inputComment } from "./variables.js" ;
+// import { renderDate } from "./render.js";
+// import { initialState } from './script.js'; 
+// import { fetchPost } from "./api.js";
+// import { renderLoading } from "./handlerLoading.js";
 
-export let inputNameValue = '';
-export let inputCommentValue = '';
+// export let inputNameValue = '';
+// export let inputCommentValue = '';
 
 //Показать ошибку
 function showError(element) {

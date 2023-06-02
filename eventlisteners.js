@@ -1,6 +1,6 @@
-import { listComments, inputComment } from "./variables.js";
-import { renderEditComment, renderComments } from "./render.js";
-import { comments } from "./api.js";
+import { listComments, autorizationButton, formBlock} from "./variables.js";
+import { renderEditComment, renderComments, renderEnterForm } from "./render.js";
+import { comments } from "./script.js";
 
 // Функция для имитации запросов в API
 function delay(interval = 300) {
@@ -77,4 +77,13 @@ export function initAnswerCommentEventListener() {
 			inputComment.focus();
 		})
 	}
+}
+
+
+//Подписка на событие кнопки авторизации
+export function initAutorizationEventListener() {
+	autorizationButton.addEventListener('click', () => {
+		listComments.classList.add('hidden');
+		renderEnterForm();
+	}) 
 }

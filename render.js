@@ -1,7 +1,8 @@
-import { listComments, formBlock,autorizationButton } from "./variables.js";
-// import {initEditButtonEventListeners, initLikeButtonEventListeners, initDeleteButtonEventListeners, initAnswerCommentEventListener } from "./eventlisteners.js";
+import { listComments, formBlock} from "./variables.js";
+import {initEditButtonEventListeners, initLikeButtonEventListeners, initDeleteButtonEventListeners, initAnswerCommentEventListener } from "./eventlisteners.js";
 import { comments, fetchCommentsAndRender } from "./script.js";
-import {initAutorizationEventListener} from "./eventlisteners.js";
+import { loginUser } from './api.js'
+
 
 //Создание даты в нужном формате
 export function renderDate(dataDate) {
@@ -92,10 +93,10 @@ export function renderComments() {
 	})
 
 	listComments.innerHTML = commentsHtml.join('');
-	// initLikeButtonEventListeners();
-	// initEditButtonEventListeners();
-	// initDeleteButtonEventListeners();
-	// initAnswerCommentEventListener();
+	initLikeButtonEventListeners();
+	initEditButtonEventListeners();
+	initDeleteButtonEventListeners();
+	initAnswerCommentEventListener();
 }
 
 
@@ -110,10 +111,19 @@ export function renderAddForm() {
 		</div>
 	`
 
+	// if(token) {
+	// 	const inputName = form.querySelector('.add-form-name');
+	// 	inputName.value = 
+	// }
 	formBlock.innerHTML = addFormHtml;
 
 }
 
+let token = null;
+
+function setToken(newToken) {
+	return token = newToken;
+}
 
 //Рендер формы входа
 export function renderEnterForm() {
@@ -123,7 +133,7 @@ export function renderEnterForm() {
 			<input type="text" class="enter-form-login" placeholder="Введите ваш логин" />
 			<input type="text" class="enter-form-password" placeholder="Введите ваш пароль" />
 			<div class="enter-form-row">
-				<button class="enter-form-button button-disabled ">Войти</button>
+				<button class="enter-form-button">Войти</button>
 			</div>
 			<div class="enter-form-row">
 				<p class="reg-button">Зарегистрироваться</p>
@@ -136,17 +146,49 @@ export function renderEnterForm() {
 
 	const regButton = document.querySelector('.reg-button');
 	const cancelButton = document.querySelector('.cancel-button');
+	const enterButton = document.querySelector('.enter-form-button');
 
 	regButton.addEventListener('click', () => {
 		renderRegisterForm();
 	})
+
 	cancelButton.addEventListener('click', () => {
 		listComments.classList.remove('hidden');
 		fetchCommentsAndRender();
-		formBlock.innerHTML = `Чтобы добавить комментарий <span class="autorization-button">авторизуйтесь</span>`
-		initAutorizationEventListener();
+		renderInitialState();
 	})
 
+	enterButton.addEventListener('click', () => {
+		const login = document.querySelector('.enter-form-login').value;
+		const password = document.querySelector('.enter-form-password').value;
+
+		if(!login) {
+			alert('Введите логин');
+			return;
+		}
+
+		if(!password) {
+			alert('Введите пароль');
+			return;
+		}
+
+		loginUser({
+			login: login,
+			password: password
+		})
+		.then(user => {
+			listComments.classList.remove('hidden');
+			setToken(`Bearer ${user.user.token}`);
+			fetchCommentsAndRender();
+			renderAddForm();
+			const inputName = document.querySelector('.add-form-name');
+			inputName.value = user.user.name
+			inputName.disabled = true;
+		})
+		.catch((error) => {
+			alert(error.message);
+		})
+	})
 }
 
 
@@ -172,4 +214,20 @@ export function renderRegisterForm() {
 	regButtonAuth.addEventListener('click', () => {
 		renderEnterForm()
 	})
+}
+
+
+export function renderInitialState() {
+	const initialHtml = `
+	Чтобы добавить комментарий <span class="autorization-button">авторизуйтесь</span>
+	`;
+
+	formBlock.innerHTML = initialHtml;
+
+	const autorizationButton = document.querySelector('.autorization-button');
+
+	autorizationButton.addEventListener('click', () => {
+		listComments.classList.add('hidden');
+		renderEnterForm();
+	}) 
 }

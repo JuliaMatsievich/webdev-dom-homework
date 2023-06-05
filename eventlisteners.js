@@ -80,10 +80,10 @@ export function initAnswerCommentEventListener() {
 }
 
 
-//Подписка на событие кнопки авторизации
-export function initAutorizationEventListener() {
-	autorizationButton.addEventListener('click', () => {
-		listComments.classList.add('hidden');
-		renderEnterForm();
-	}) 
-}
+// //Подписка на событие кнопки авторизации
+// export function initAutorizationEventListener() {
+// 	autorizationButton.addEventListener('click', () => {
+// 		listComments.classList.add('hidden');
+// 		renderEnterForm();
+// 	}) 
+// }

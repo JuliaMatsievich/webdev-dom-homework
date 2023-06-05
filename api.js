@@ -6,7 +6,8 @@ import { removerLoading } from "./handlerLoading.js" ;
 
 // export let comments = [];
 
-const baseUrl = "https://wedev-api.sky.pro/api/v2/julia-matsievich"
+const baseUrl = "https://wedev-api.sky.pro/api/v2/julia-matsievich";
+const baseUrlApi = 'https://wedev-api.sky.pro/api';
 
 
 // Функция запроса GET
@@ -97,3 +98,19 @@ export function fetchGet() {
 // 		})
 // }
 
+//Функция запроса на авторизацию
+export function loginUser( { login, password} ) {
+	return fetch(`${baseUrlApi}/user/login`, {
+				method: 'POST',
+				body: JSON.stringify({
+					login,
+					password
+				}),
+			})
+			.then(response => {
+				if (response.status === 400) {
+					throw new Error('Неверный логин или пароль')
+				}
+				return response.json();
+			})
+}

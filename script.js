@@ -1,9 +1,8 @@
 import { fetchGet } from "./api.js";
-import { listComments, autorizationButton, formBlock } from "./variables.js";
-import { renderEnterForm, renderDate, renderComments } from "./render.js";
+import { listComments, formBlock } from "./variables.js";
+import { renderEnterForm, renderDate, renderComments, renderInitialState } from "./render.js";
 import { renderLoading,removerLoading } from "./handlerLoading.js" ;
 import { handlerAddComment } from "./handlerAddComments.js";
-import {initAutorizationEventListener} from "./eventlisteners.js";
 
 //Начальное состояние формы
 // export function initialState() {
@@ -42,6 +41,7 @@ export function fetchCommentsAndRender() {
 		})
 }
 fetchCommentsAndRender();
+renderInitialState();
 
 //Подписка на событие клика по кнопке "Написать"
 // formButton.addEventListener('click', handlerAddComment);
@@ -63,6 +63,3 @@ fetchCommentsAndRender();
 // 		formButton.classList.add('button-disabled')
 // 	}
 // })
-
-
-initAutorizationEventListener();

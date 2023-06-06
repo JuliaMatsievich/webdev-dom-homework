@@ -1,12 +1,7 @@
 import { formBlock } from "./variables.js";
-import { renderDate } from "./render.js";
-import { comments, fetchCommentsAndRender, fetchCommentsAndRenderAuthoriz } from "./script.js";
-// import { initialState } from './script.js'; 
+import { fetchCommentsAndRenderAuthoriz } from "./script.js";
 import { fetchPost } from "./api.js";
 import { renderLoading, removerLoading } from "./handlerLoading.js";
-
-// export let inputNameValue = '';
-// export let inputCommentValue = '';
 
 //Показать ошибку
 function showError(element) {
@@ -44,23 +39,20 @@ export function handlerAddComment() {
 	if (!isValid(inputNameValue, inputCommentValue)) {
 		showError(formBlock);
 		return;
-	}
-	// const date = renderDate();
+	}	
 
 	let newComment = {
-
 		text: inputComment.value.
 			replaceAll("<", "&lt;").
 			replaceAll(">", "&gt;").
 			replaceAll("/**", "<div class='quote'>").
 			replaceAll("**/", "</div>"),
-	
 	}
 
 	fetchPostandRender(newComment);
 
 	renderLoading();
-	// initialState();
+	inputComment.value = '';
 }
 
 function fetchPostandRender(newComment) {
@@ -70,14 +62,13 @@ function fetchPostandRender(newComment) {
 	})
 	.catch(error => {
 		removerLoading();
-		// inputComment.value = inputCommentValue;
+		inputComment.value = inputCommentValue;
 		if (error.message === 'код 400') {
 			alert('Имя и комментарий должны быть не менее 3х символов');
 			return;
 		}
 		if (error.message === 'код 500') {
 			fetchPostandRender(newComment);
-			// initialState();
 		} else {
 			alert(error.message)
 		}

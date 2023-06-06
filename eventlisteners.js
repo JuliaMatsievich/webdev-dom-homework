@@ -65,6 +65,7 @@ export function initDeleteButtonEventListeners() {
 //Подписка на событие ответить на комментарий
 export function initAnswerCommentEventListener() {
 	const commentElements = document.querySelectorAll('.comment');
+	const inputComment = document.querySelector('.add-form-text')
 
 	for (const commentElement of commentElements) {
 		commentElement.addEventListener('click', (event) => {
@@ -79,11 +80,3 @@ export function initAnswerCommentEventListener() {
 	}
 }
 
-
-// //Подписка на событие кнопки авторизации
-// export function initAutorizationEventListener() {
-// 	autorizationButton.addEventListener('click', () => {
-// 		listComments.classList.add('hidden');
-// 		renderEnterForm();
-// 	}) 
-// }

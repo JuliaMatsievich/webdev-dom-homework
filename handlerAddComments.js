@@ -1,8 +1,9 @@
-// import { inputName, inputComment } from "./variables.js" ;
-// import { renderDate } from "./render.js";
+import { formBlock } from "./variables.js";
+import { renderDate } from "./render.js";
+import { comments, fetchCommentsAndRender, fetchCommentsAndRenderAuthoriz } from "./script.js";
 // import { initialState } from './script.js'; 
-// import { fetchPost } from "./api.js";
-// import { renderLoading } from "./handlerLoading.js";
+import { fetchPost } from "./api.js";
+import { renderLoading, removerLoading } from "./handlerLoading.js";
 
 // export let inputNameValue = '';
 // export let inputCommentValue = '';
@@ -24,8 +25,8 @@ function hideError() {
 }
 
 //Проверка на валидность полей ввода
-function isValid() {
-	if (inputName.value && inputComment.value) {
+function isValid(name,comment) {
+	if (name && comment) {
 		return true;
 	} else {
 		return false;
@@ -34,31 +35,51 @@ function isValid() {
 
 // Обработка добавления комментария
 export function handlerAddComment() {
-	inputNameValue = inputName.value;
-	inputCommentValue = inputComment.value;
+	const inputComment = formBlock.querySelector('.add-form-text');
+	const inputName = formBlock.querySelector('.add-form-name');
+	let inputNameValue = inputName.value;
+	let inputCommentValue = inputComment.value;
 
 	hideError();
-	if (!isValid()) {
-		showError(form);
+	if (!isValid(inputNameValue, inputCommentValue)) {
+		showError(formBlock);
 		return;
 	}
-	const date = renderDate();
+	// const date = renderDate();
 
 	let newComment = {
-		name: inputName.value.
-			replaceAll("<", "&lt;").
-			replaceAll(">", "&gt;"),
-		date: date,
+
 		text: inputComment.value.
 			replaceAll("<", "&lt;").
 			replaceAll(">", "&gt;").
 			replaceAll("/**", "<div class='quote'>").
 			replaceAll("**/", "</div>"),
-		likes: 0,
-		forceError: true
+	
 	}
 
-	fetchPost(newComment);
+	fetchPostandRender(newComment);
+
 	renderLoading();
-	initialState();
+	// initialState();
+}
+
+function fetchPostandRender(newComment) {
+	return fetchPost(newComment)
+	.then(responseData => {
+		fetchCommentsAndRenderAuthoriz();
+	})
+	.catch(error => {
+		removerLoading();
+		// inputComment.value = inputCommentValue;
+		if (error.message === 'код 400') {
+			alert('Имя и комментарий должны быть не менее 3х символов');
+			return;
+		}
+		if (error.message === 'код 500') {
+			fetchPostandRender(newComment);
+			// initialState();
+		} else {
+			alert(error.message)
+		}
+	});
 }

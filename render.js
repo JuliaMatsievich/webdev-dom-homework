@@ -1,7 +1,8 @@
-import { listComments, formBlock} from "./variables.js";
-import {initEditButtonEventListeners, initLikeButtonEventListeners, initDeleteButtonEventListeners, initAnswerCommentEventListener } from "./eventlisteners.js";
+import { listComments, formBlock } from "./variables.js";
+import { initEditButtonEventListeners, initLikeButtonEventListeners, initDeleteButtonEventListeners, initAnswerCommentEventListener } from "./eventlisteners.js";
 import { comments, fetchCommentsAndRender } from "./script.js";
-import { loginUser } from './api.js'
+import { loginUser } from './api.js';
+import { handlerAddComment } from "./handlerAddComments.js";
 
 
 //Создание даты в нужном формате
@@ -110,12 +111,11 @@ export function renderAddForm() {
 				<button class="add-form-button button-disabled ">Написать</button>
 		</div>
 	`
-
-	// if(token) {
-	// 	const inputName = form.querySelector('.add-form-name');
-	// 	inputName.value = 
-	// }
 	formBlock.innerHTML = addFormHtml;
+
+	const formButton = formBlock.querySelector('.add-form-button');
+	// Подписка на событие клика по кнопке "Написать"
+	formButton.addEventListener('click', handlerAddComment);
 
 }
 
@@ -162,12 +162,12 @@ export function renderEnterForm() {
 		const login = document.querySelector('.enter-form-login').value;
 		const password = document.querySelector('.enter-form-password').value;
 
-		if(!login) {
+		if (!login) {
 			alert('Введите логин');
 			return;
 		}
 
-		if(!password) {
+		if (!password) {
 			alert('Введите пароль');
 			return;
 		}
@@ -176,18 +176,19 @@ export function renderEnterForm() {
 			login: login,
 			password: password
 		})
-		.then(user => {
-			listComments.classList.remove('hidden');
-			setToken(`Bearer ${user.user.token}`);
-			fetchCommentsAndRender();
-			renderAddForm();
-			const inputName = document.querySelector('.add-form-name');
-			inputName.value = user.user.name
-			inputName.disabled = true;
-		})
-		.catch((error) => {
-			alert(error.message);
-		})
+			.then(user => {
+				listComments.classList.remove('hidden');
+				setToken(`Bearer ${user.user.token}`);
+				fetchCommentsAndRender();
+				renderAddForm();
+				const inputName = document.querySelector('.add-form-name');
+				inputName.value = user.user.name
+				inputName.disabled = true;
+				console.log(token);
+			})
+			.catch((error) => {
+				alert(error.message);
+			})
 	})
 }
 
@@ -216,7 +217,7 @@ export function renderRegisterForm() {
 	})
 }
 
-
+//Рендер начального состояния
 export function renderInitialState() {
 	const initialHtml = `
 	Чтобы добавить комментарий <span class="autorization-button">авторизуйтесь</span>
@@ -229,5 +230,5 @@ export function renderInitialState() {
 	autorizationButton.addEventListener('click', () => {
 		listComments.classList.add('hidden');
 		renderEnterForm();
-	}) 
+	})
 }

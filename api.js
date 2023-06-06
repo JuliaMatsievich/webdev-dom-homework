@@ -1,3 +1,6 @@
+//Документация к апи: https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/v2/%5Bkey%5D/comments/README.md
+
+
 import { renderDate, renderComments } from './render.js';
 import { removerLoading } from "./handlerLoading.js" ;
 // import { inputName, inputComment } from "./variables.js";
@@ -10,10 +13,27 @@ const baseUrl = "https://wedev-api.sky.pro/api/v2/julia-matsievich";
 const baseUrlApi = 'https://wedev-api.sky.pro/api';
 
 
-// Функция запроса GET
+// Функция запроса GET НЕавторизованного пользователя
 export function fetchGet() {
 	return fetch(`${baseUrl}/comments`, {
-	method: 'GET'
+	method: 'GET',
+})
+.then(response => {
+	if(response.status === 500) {
+		throw new Error('код 500');
+	}
+	return response.json()
+})
+}
+
+
+// Функция запроса GET авторизованного пользователя
+export function fetchGetAuthoriz() {
+	return fetch(`${baseUrl}/comments`, {
+	method: 'GET',
+	headers: {
+		Authorization: 'Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k',
+	},
 })
 .then(response => {
 	if(response.status === 500) {
@@ -59,7 +79,46 @@ export function fetchGet() {
 // 		})
 // }
 
-
+// Функция запроса POST
+export const fetchPost = (newComment) => {
+	return fetch(`${baseUrl}/comments`, {
+		method: 'POST',
+		body: JSON.stringify(newComment),
+		headers: {
+			Authorization: 'Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k',
+		},
+	})
+		.then(response => {			
+			if (response.status === 400) {
+				throw new Error('код 400');
+			}
+			if (response.status === 500) {
+				throw new Error('код 500');
+			}
+			return response.json();
+		})
+	
+		// .then(responseData => {
+		// 	comments = responseData.comments;
+		// 	fetchGet()
+		// })
+		// .catch(error => {
+		// 	removerLoading();
+		// 	inputName.value = inputNameValue;
+		// 	inputComment.value = inputCommentValue;
+		// 	if (error.message === 'код 400') {
+		// 		alert('Имя и комментарий должны быть не менее 3х символов');
+		// 		return;
+		// 	}
+		// 	if (error.message === 'код 500') {
+		// 		fetchPost(newComment);
+		// 		initialState();
+		// 	} else {
+		// 		alert('Кажется, у вас сломался интернет, попробуйте позже')
+		// 		console.log(error);
+		// 	}
+		// })
+}
 
 // Функция запроса POST
 // export const fetchPost = (newComment) => {

@@ -1,4 +1,4 @@
-import { fetchGet } from "./api.js";
+import { fetchGet, fetchGetAuthoriz } from "./api.js";
 import { listComments, formBlock } from "./variables.js";
 import { renderEnterForm, renderDate, renderComments, renderInitialState } from "./render.js";
 import { renderLoading,removerLoading } from "./handlerLoading.js" ;
@@ -12,8 +12,18 @@ import { handlerAddComment } from "./handlerAddComments.js";
 // 	formButton.classList.add('button-disabled');
 // }
 export let comments = [];
+
+
 listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
 // initialState();
+
+// function renderApp() {
+// 	const container = document.querySelector('.container');
+
+// 	if(!token) {
+		
+// 	}
+// }
 
 export function fetchCommentsAndRender() {
 	return fetchGet()
@@ -40,10 +50,43 @@ export function fetchCommentsAndRender() {
 			alert('Кажется, у вас сломался интернет, попробуйте позже')
 		})
 }
+
+
+export function fetchCommentsAndRenderAuthoriz() {
+	return fetchGetAuthoriz()
+		.then(responseData => {
+			let appcomments = responseData.comments.map((comment) => {
+				return {
+					name: comment.author.name,
+					date: renderDate(comment.date),
+					text: comment.text,
+					likes: comment.likes,
+					isLiked: false,
+					forceError: true
+				}
+			})
+			comments = appcomments;
+			renderComments();
+			removerLoading();
+		})
+		.catch(error => {
+			if (error.message === 'код 500') {
+				fetchCommentsAndRenderAuthoriz();
+			}
+			console.log(error);
+			alert('Кажется, у вас сломался интернет, попробуйте позже')
+		})
+}
+
+
 fetchCommentsAndRender();
 renderInitialState();
 
-//Подписка на событие клика по кнопке "Написать"
+
+
+
+
+// Подписка на событие клика по кнопке "Написать"
 // formButton.addEventListener('click', handlerAddComment);
 
 //Подписка на создание комментария нажатием клавиши Enter

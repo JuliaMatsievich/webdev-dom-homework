@@ -44,7 +44,7 @@ export function fetchGetAuthoriz(token) {
 }
 
 // Функция запроса POST
-export const fetchPost = ({newComment, token}) => {
+export const fetchPost = (newComment, token) => {
 	return fetch(`${baseUrl}/comments`, {
 		method: 'POST',
 		body: JSON.stringify(newComment),

@@ -69,10 +69,10 @@ export function renderLoginComponent({ listComments, formBlock, setToken, fetchC
 					setToken(`Bearer ${user.user.token}`);
 					fetchCommentsAndRenderAuthoriz(listComments);
 					
-					renderAddForm(formBlock, user.user.token);
-					// const inputName = document.querySelector('.add-form-name');
-					// inputName.value = user.user.name
-					// inputName.disabled = true;
+					renderAddForm(formBlock, `Bearer ${user.user.token}`);
+					const inputName = document.querySelector('.add-form-name');
+					inputName.value = user.user.name
+					inputName.disabled = true;
 				})
 				.catch((error) => {
 					alert(error.message);

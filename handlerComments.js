@@ -127,8 +127,6 @@ export function renderComments(listComments) {
 
 //Рендер формы добавления комменатриев
 export function renderAddForm(formBlock, token) {
-	console.log(token);
-	console.log(formBlock);
 	const addFormHtml = `
 		<div class="add-form">
 			<input type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -162,7 +160,7 @@ export function renderAddForm(formBlock, token) {
 				replaceAll("**/", "</div>"),
 		}
 	
-		fetchPostandRender({newComment, token});
+		fetchPostandRender(newComment, token);
 	
 		renderLoading();
 		inputComment.value = '';

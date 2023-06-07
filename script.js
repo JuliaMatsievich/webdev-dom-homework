@@ -4,6 +4,7 @@ import { fetchGet, fetchGetAuthoriz, fetchPost } from "./api.js";
 import { renderLoading,removerLoading } from "./handlerLoading.js" ;
 // import { handlerAddComment } from "./handlerComments.js";
 import { renderLoginComponent } from './login-component.js';
+import { listComments } from "./variables.js";
 
 
 //Начальное состояние формы
@@ -78,13 +79,15 @@ export const fetchCommentsAndRenderAuthoriz = (listComments) => {
 
 
 export function fetchPostandRender(newComment, token) {
+	// console.log(token);
+	// console.log(listComments);
 	return fetchPost(newComment, token)
 	.then(responseData => {
-		fetchCommentsAndRenderAuthoriz(listComments, token);
+		fetchCommentsAndRenderAuthoriz(listComments);
 	})
 	.catch(error => {
 		removerLoading();
-		inputComment.value = inputCommentValue;
+		// inputComment.value = inputCommentValue;
 		if (error.message === 'код 400') {
 			alert('Имя и комментарий должны быть не менее 3х символов');
 			return;

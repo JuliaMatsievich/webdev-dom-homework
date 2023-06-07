@@ -1,5 +1,5 @@
 import { listComments, autorizationButton, formBlock} from "./variables.js";
-import { renderEditComment, renderComments } from "./render.js";
+import { renderEditComment, renderComments } from "./handlerComments.js";
 import { comments } from "./script.js";
 
 // Функция для имитации запросов в API

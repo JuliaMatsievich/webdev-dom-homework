@@ -1,8 +1,8 @@
-import { fetchGet, fetchGetAuthoriz } from "./api.js";
+import { fetchGet, fetchGetAuthoriz, fetchPost } from "./api.js";
 // import { listComments, formBlock } from "./variables.js";
- import {renderDate, renderComments} from "./render.js";
+ import {renderDate, renderComments} from "./handlerComments.js";
 import { renderLoading,removerLoading } from "./handlerLoading.js" ;
-import { handlerAddComment } from "./handlerAddComments.js";
+// import { handlerAddComment } from "./handlerComments.js";
 import { renderLoginComponent } from './login-component.js';
 
 
@@ -49,7 +49,7 @@ export const fetchCommentsAndRender = (listComments) => {
 }
 
 
-export const fetchCommentsAndRenderAuthoriz = (listComments,token) => {
+export const fetchCommentsAndRenderAuthoriz = (listComments) => {
 	return fetchGetAuthoriz(token)
 		.then(responseData => {
 			let appcomments = responseData.comments.map((comment) => {
@@ -68,7 +68,7 @@ export const fetchCommentsAndRenderAuthoriz = (listComments,token) => {
 		})
 		.catch(error => {
 			if (error.message === 'код 500') {
-				fetchCommentsAndRenderAuthoriz(listComments, token);
+				fetchCommentsAndRenderAuthoriz(listComments);
 			}
 			console.log(error);
 			alert('Кажется, у вас сломался интернет, попробуйте позже')
@@ -76,16 +76,35 @@ export const fetchCommentsAndRenderAuthoriz = (listComments,token) => {
 }
 
 
+
+export function fetchPostandRender(newComment, token) {
+	return fetchPost(newComment, token)
+	.then(responseData => {
+		fetchCommentsAndRenderAuthoriz(listComments, token);
+	})
+	.catch(error => {
+		removerLoading();
+		inputComment.value = inputCommentValue;
+		if (error.message === 'код 400') {
+			alert('Имя и комментарий должны быть не менее 3х символов');
+			return;
+		}
+		if (error.message === 'код 500') {
+			fetchPostandRender(newComment, token);
+		} else {
+			alert(error.message)
+		}
+	});
+}
+
 // fetchCommentsAndRender();
 // renderInitialState();
-
 
 function renderApp() {
 	const listComments = document.querySelector('.comments');
 	const formBlock = document.querySelector('.form');
 	listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
 	if(!token) {
-
 		renderLoginComponent({
 			listComments,
 			formBlock,
@@ -94,7 +113,7 @@ function renderApp() {
 			},
 			fetchCommentsAndRenderAuthoriz})	
 	} else {
-		fetchCommentsAndRenderAuthoriz(listComments,token);
+		fetchCommentsAndRenderAuthoriz(listComments);
 	}
 }
 

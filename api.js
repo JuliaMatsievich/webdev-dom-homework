@@ -1,7 +1,7 @@
 //Документация к апи: https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/v2/%5Bkey%5D/comments/README.md
 
 
-import { renderDate, renderComments } from './render.js';
+import { renderDate, renderComments } from './handlerComments.js';
 import { removerLoading } from "./handlerLoading.js" ;
 // import { inputName, inputComment } from "./variables.js";
 // import { initialState } from './script.js'; 
@@ -44,7 +44,7 @@ export function fetchGetAuthoriz(token) {
 }
 
 // Функция запроса POST
-export const fetchPost = (newComment, token) => {
+export const fetchPost = ({newComment, token}) => {
 	return fetch(`${baseUrl}/comments`, {
 		method: 'POST',
 		body: JSON.stringify(newComment),

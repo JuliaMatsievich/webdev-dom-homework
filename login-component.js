@@ -1,7 +1,6 @@
 import { loginUser } from "./api.js";
 import { fetchCommentsAndRender } from "./script.js";
-// import { renderInitialState } from "./render.js";
-// import { renderEnterForm } from "./render.js";
+import { renderAddForm } from "./handlerComments.js";
 
 export function renderLoginComponent({ listComments, formBlock, setToken, fetchCommentsAndRenderAuthoriz }) {
 	fetchCommentsAndRender(listComments);
@@ -44,8 +43,7 @@ export function renderLoginComponent({ listComments, formBlock, setToken, fetchC
 
 		cancelButton.addEventListener('click', () => {
 			listComments.classList.remove('hidden');
-			fetchCommentsAndRender();
-			renderInitialState();
+			renderLoginComponent({ listComments, formBlock, setToken, fetchCommentsAndRenderAuthoriz })
 		})
 
 		enterButton.addEventListener('click', () => {
@@ -69,20 +67,18 @@ export function renderLoginComponent({ listComments, formBlock, setToken, fetchC
 				.then(user => {
 					listComments.classList.remove('hidden');
 					setToken(`Bearer ${user.user.token}`);
-					fetchCommentsAndRenderAuthoriz(token);
-					renderAddForm();
-					const inputName = document.querySelector('.add-form-name');
-					inputName.value = user.user.name
-					inputName.disabled = true;
+					fetchCommentsAndRenderAuthoriz(listComments);
+					
+					renderAddForm(formBlock, user.user.token);
+					// const inputName = document.querySelector('.add-form-name');
+					// inputName.value = user.user.name
+					// inputName.disabled = true;
 				})
 				.catch((error) => {
 					alert(error.message);
 				})
 		})
 	})
-
-
-	// renderInitialState(formBlock, listComments);
 }
 
 //Рендер начального состояния

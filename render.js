@@ -1,6 +1,5 @@
-import { listComments, formBlock } from "./variables.js";
 import { initEditButtonEventListeners, initLikeButtonEventListeners, initDeleteButtonEventListeners, initAnswerCommentEventListener } from "./eventlisteners.js";
-import { comments, fetchCommentsAndRender } from "./script.js";
+import { comments, fetchCommentsAndRender, fetchCommentsAndRenderAuthoriz } from "./script.js";
 import { loginUser } from './api.js';
 import { handlerAddComment } from "./handlerAddComments.js";
 
@@ -63,7 +62,7 @@ export function renderEditComment(element) {
 
 
 //Рендер комментариев
-export function renderComments() {
+export function renderComments(listComments) {
 
 	const commentsHtml = comments.map((comment, index) => {
 		comment.likeButtonClass = '';
@@ -94,15 +93,15 @@ export function renderComments() {
 	})
 
 	listComments.innerHTML = commentsHtml.join('');
-	initLikeButtonEventListeners();
-	initEditButtonEventListeners();
-	initDeleteButtonEventListeners();
-	initAnswerCommentEventListener();
+	// initLikeButtonEventListeners();
+	// initEditButtonEventListeners();
+	// initDeleteButtonEventListeners();
+	// initAnswerCommentEventListener();
 }
 
 
 //Рендер формы добавления комменатриев
-export function renderAddForm() {
+export function renderAddForm(formBlock) {
 	const addFormHtml = `
 		<div class="add-form">
 			<input type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -119,78 +118,77 @@ export function renderAddForm() {
 
 }
 
-let token = null;
+// function setToken(newToken) {
+// 	return token = newToken;
+// }
 
-function setToken(newToken) {
-	return token = newToken;
-}
+// //Рендер формы входа
+// export function renderEnterForm() {
+// 	const enterFormHtml = `
+// 		<div class="enter-form">
+// 			<h2 class="enter-title">Форма входа</h2>
+// 			<input type="text" class="enter-form-login" placeholder="Введите ваш логин" />
+// 			<input type="text" class="enter-form-password" placeholder="Введите ваш пароль" />
+// 			<div class="enter-form-row">
+// 				<button class="enter-form-button">Войти</button>
+// 			</div>
+// 			<div class="enter-form-row">
+// 				<p class="reg-button">Зарегистрироваться</p>
+// 				<p class="cancel-button">Вернуться к просмотру комментариев</p>
+// 			</div
+// 		</div>
+// 	`
 
-//Рендер формы входа
-export function renderEnterForm() {
-	const enterFormHtml = `
-		<div class="enter-form">
-			<h2 class="enter-title">Форма входа</h2>
-			<input type="text" class="enter-form-login" placeholder="Введите ваш логин" />
-			<input type="text" class="enter-form-password" placeholder="Введите ваш пароль" />
-			<div class="enter-form-row">
-				<button class="enter-form-button">Войти</button>
-			</div>
-			<div class="enter-form-row">
-				<p class="reg-button">Зарегистрироваться</p>
-				<p class="cancel-button">Вернуться к просмотру комментариев</p>
-			</div
-		</div>
-	`
+// 	formBlock.innerHTML = enterFormHtml;
 
-	formBlock.innerHTML = enterFormHtml;
+// 	const regButton = document.querySelector('.reg-button');
+// 	const cancelButton = document.querySelector('.cancel-button');
+// 	const enterButton = document.querySelector('.enter-form-button');
 
-	const regButton = document.querySelector('.reg-button');
-	const cancelButton = document.querySelector('.cancel-button');
-	const enterButton = document.querySelector('.enter-form-button');
+// 	regButton.addEventListener('click', () => {
+// 		renderRegisterForm();
+// 	})
 
-	regButton.addEventListener('click', () => {
-		renderRegisterForm();
-	})
+// 	cancelButton.addEventListener('click', () => {
+// 		listComments.classList.remove('hidden');
+// 		fetchCommentsAndRender();
+// 		renderInitialState();
+// 	})
 
-	cancelButton.addEventListener('click', () => {
-		listComments.classList.remove('hidden');
-		fetchCommentsAndRender();
-		renderInitialState();
-	})
+// 	enterButton.addEventListener('click', () => {
+// 		const login = document.querySelector('.enter-form-login').value;
+// 		const password = document.querySelector('.enter-form-password').value;
 
-	enterButton.addEventListener('click', () => {
-		const login = document.querySelector('.enter-form-login').value;
-		const password = document.querySelector('.enter-form-password').value;
+// 		if (!login) {
+// 			alert('Введите логин');
+// 			return;
+// 		}
 
-		if (!login) {
-			alert('Введите логин');
-			return;
-		}
+// 		if (!password) {
+// 			alert('Введите пароль');
+// 			return;
+// 		}
 
-		if (!password) {
-			alert('Введите пароль');
-			return;
-		}
+// 		loginUser({
+// 			login: login,
+// 			password: password
+// 		})
+// 			.then(user => {
+// 				listComments.classList.remove('hidden');
+// 				setToken(`Bearer ${user.user.token}`);
+// 				fetchCommentsAndRenderAuthoriz(token);
+// 				renderAddForm();
+// 				const inputName = document.querySelector('.add-form-name');
+// 				inputName.value = user.user.name
+// 				inputName.disabled = true;				
+// 			})
+// 			.catch((error) => {
+// 				alert(error.message);
+// 			})
+			
+// 	})
 
-		loginUser({
-			login: login,
-			password: password
-		})
-			.then(user => {
-				listComments.classList.remove('hidden');
-				setToken(`Bearer ${user.user.token}`);
-				fetchCommentsAndRender();
-				renderAddForm();
-				const inputName = document.querySelector('.add-form-name');
-				inputName.value = user.user.name
-				inputName.disabled = true;
-				console.log(token);
-			})
-			.catch((error) => {
-				alert(error.message);
-			})
-	})
-}
+// }
 
 
 //Рендер формы регистрации
@@ -217,18 +215,18 @@ export function renderRegisterForm() {
 	})
 }
 
-//Рендер начального состояния
-export function renderInitialState() {
-	const initialHtml = `
-	Чтобы добавить комментарий <span class="autorization-button">авторизуйтесь</span>
-	`;
+// //Рендер начального состояния
+// export function renderInitialState(formBlock, listComments) {
+// 	const initialHtml = `
+// 	Чтобы добавить комментарий <span class="autorization-button">авторизуйтесь</span>
+// 	`;
 
-	formBlock.innerHTML = initialHtml;
+// 	formBlock.innerHTML = initialHtml;
 
-	const autorizationButton = document.querySelector('.autorization-button');
+// 	const autorizationButton = document.querySelector('.autorization-button');
 
-	autorizationButton.addEventListener('click', () => {
-		listComments.classList.add('hidden');
-		renderEnterForm();
-	})
-}
+// 	autorizationButton.addEventListener('click', () => {
+// 		listComments.classList.add('hidden');
+// 		renderEnterForm();
+// 	})
+// }

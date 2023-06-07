@@ -1,8 +1,10 @@
 import { fetchGet, fetchGetAuthoriz } from "./api.js";
-import { listComments, formBlock } from "./variables.js";
-import { renderEnterForm, renderDate, renderComments, renderInitialState } from "./render.js";
+// import { listComments, formBlock } from "./variables.js";
+ import {renderDate, renderComments} from "./render.js";
 import { renderLoading,removerLoading } from "./handlerLoading.js" ;
 import { handlerAddComment } from "./handlerAddComments.js";
+import { renderLoginComponent } from './login-component.js';
+
 
 //Начальное состояние формы
 // export function initialState() {
@@ -13,19 +15,14 @@ import { handlerAddComment } from "./handlerAddComments.js";
 // }
 export let comments = [];
 
+let token = null;
 
-listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
+// container.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
+
 // initialState();
 
-// function renderApp() {
-// 	const container = document.querySelector('.container');
 
-// 	if(!token) {
-		
-// 	}
-// }
-
-export function fetchCommentsAndRender() {
+export const fetchCommentsAndRender = (listComments) => {
 	return fetchGet()
 		.then(responseData => {
 			let appcomments = responseData.comments.map((comment) => {
@@ -39,12 +36,12 @@ export function fetchCommentsAndRender() {
 				}
 			})
 			comments = appcomments;
-			renderComments();
+			renderComments(listComments);
 			removerLoading();
 		})
 		.catch(error => {
 			if (error.message === 'код 500') {
-				fetchCommentsAndRender();
+				fetchCommentsAndRender(listComments);
 			}
 			console.log(error);
 			alert('Кажется, у вас сломался интернет, попробуйте позже')
@@ -52,8 +49,8 @@ export function fetchCommentsAndRender() {
 }
 
 
-export function fetchCommentsAndRenderAuthoriz() {
-	return fetchGetAuthoriz()
+export const fetchCommentsAndRenderAuthoriz = (listComments,token) => {
+	return fetchGetAuthoriz(token)
 		.then(responseData => {
 			let appcomments = responseData.comments.map((comment) => {
 				return {
@@ -66,12 +63,12 @@ export function fetchCommentsAndRenderAuthoriz() {
 				}
 			})
 			comments = appcomments;
-			renderComments();
+			renderComments(listComments);
 			removerLoading();
 		})
 		.catch(error => {
 			if (error.message === 'код 500') {
-				fetchCommentsAndRenderAuthoriz();
+				fetchCommentsAndRenderAuthoriz(listComments, token);
 			}
 			console.log(error);
 			alert('Кажется, у вас сломался интернет, попробуйте позже')
@@ -79,12 +76,29 @@ export function fetchCommentsAndRenderAuthoriz() {
 }
 
 
-fetchCommentsAndRender();
-renderInitialState();
+// fetchCommentsAndRender();
+// renderInitialState();
 
 
+function renderApp() {
+	const listComments = document.querySelector('.comments');
+	const formBlock = document.querySelector('.form');
+	listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
+	if(!token) {
 
+		renderLoginComponent({
+			listComments,
+			formBlock,
+			setToken: (newToken) => {
+				token = newToken;
+			},
+			fetchCommentsAndRenderAuthoriz})	
+	} else {
+		fetchCommentsAndRenderAuthoriz(listComments,token);
+	}
+}
 
+renderApp();
 
 // Подписка на событие клика по кнопке "Написать"
 // formButton.addEventListener('click', handlerAddComment);

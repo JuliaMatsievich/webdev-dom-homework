@@ -28,11 +28,11 @@ export function fetchGet() {
 
 
 // Функция запроса GET авторизованного пользователя
-export function fetchGetAuthoriz() {
+export function fetchGetAuthoriz(token) {
 	return fetch(`${baseUrl}/comments`, {
 	method: 'GET',
 	headers: {
-		Authorization: 'Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k',
+		Authorization: token,
 	},
 })
 .then(response => {
@@ -44,12 +44,12 @@ export function fetchGetAuthoriz() {
 }
 
 // Функция запроса POST
-export const fetchPost = (newComment) => {
+export const fetchPost = (newComment, token) => {
 	return fetch(`${baseUrl}/comments`, {
 		method: 'POST',
 		body: JSON.stringify(newComment),
 		headers: {
-			Authorization: 'Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k',
+			Authorization: token,
 		},
 	})
 		.then(response => {			

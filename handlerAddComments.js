@@ -49,16 +49,16 @@ export function handlerAddComment() {
 			replaceAll("**/", "</div>"),
 	}
 
-	fetchPostandRender(newComment);
+	fetchPostandRender(newComment, token);
 
 	renderLoading();
 	inputComment.value = '';
 }
 
-function fetchPostandRender(newComment) {
-	return fetchPost(newComment)
+function fetchPostandRender(newComment, token) {
+	return fetchPost(newComment, token)
 	.then(responseData => {
-		fetchCommentsAndRenderAuthoriz();
+		fetchCommentsAndRenderAuthoriz(token);
 	})
 	.catch(error => {
 		removerLoading();
@@ -68,7 +68,7 @@ function fetchPostandRender(newComment) {
 			return;
 		}
 		if (error.message === 'код 500') {
-			fetchPostandRender(newComment);
+			fetchPostandRender(newComment, token);
 		} else {
 			alert(error.message)
 		}

@@ -99,8 +99,6 @@ function renderInitialState(formBlock, listComments) {
 	})
 }
 
-
-
 //Рендер формы входа
 function renderEnterForm(formBlock, listComments) {
 	const enterFormHtml = `

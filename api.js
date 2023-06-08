@@ -20,7 +20,7 @@ export function fetchGet() {
 })
 .then(response => {
 	if(response.status === 500) {
-		throw new Error('код 500');
+		throw new Error('Сервер сломался');
 	}
 	return response.json()
 })
@@ -37,7 +37,7 @@ export function fetchGetAuthoriz(token) {
 })
 .then(response => {
 	if(response.status === 500) {
-		throw new Error('код 500');
+		throw new Error('Сервер сломался');
 	}
 	return response.json()
 })
@@ -54,10 +54,10 @@ export const fetchPost = (newComment, token) => {
 	})
 		.then(response => {			
 			if (response.status === 400) {
-				throw new Error('код 400');
+				throw new Error('Плохой запрос');
 			}
 			if (response.status === 500) {
-				throw new Error('код 500');
+				throw new Error('Сервер сломался');
 			}
 			return response.json();
 		})
@@ -78,4 +78,25 @@ export function loginUser( { login, password} ) {
 				}
 				return response.json();
 			})
+}
+
+
+//Функция запроса на удаление комментария
+export function deleteComments({ token,id }) {
+	console.log(`${baseUrl}/comments/` + id);
+	return fetch(`${baseUrl}/comments/` + id, {
+		method: 'DELETE',
+		headers: {
+			Authorization: token,
+		},
+	})
+		.then((response) => {			
+			// if (response.status === 400) {
+			// 	throw new Error('код 400');
+			// }
+			// if (response.status === 500) {
+			// 	throw new Error('код 500');
+			// }
+			return response.json();
+		})
 }

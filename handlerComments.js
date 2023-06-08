@@ -1,7 +1,7 @@
-import { formBlock, listComments } from "./variables.js";
 import { comments, fetchPostandRender } from "./script.js";
-// import { fetchPost } from "./api.js";
 import { renderLoading, removerLoading } from "./handlerLoading.js";
+import { initEditButtonEventListeners, initLikeButtonEventListeners, initDeleteButtonEventListeners, initAnswerCommentEventListener } from "./eventlisteners.js";
+
 
 //Показать ошибку
 function showError(element) {
@@ -20,7 +20,7 @@ function hideError() {
 }
 
 //Проверка на валидность полей ввода
-function isValid(name,comment) {
+function isValid(name, comment) {
 	if (name && comment) {
 		return true;
 	} else {
@@ -88,7 +88,41 @@ export function renderEditComment(element) {
 
 //Рендер комментариев
 export function renderComments(listComments) {
+	
+	const commentsHtml = comments.map((comment, index) => {
+		comment.likeButtonClass = '';
 
+		if (comment.isLiked) {
+			comment.likeButtonClass = '-active-like';
+		}
+
+		return `
+			<li class="comment" data-comment=${index}>
+			<div class="comment-header">
+			  <div>${comment.name}</div>
+			  <div>${comment.date}</div>
+			</div>
+			<div class="comment-body">
+			  <div class="comment-text">${comment.text}</div>
+			</div>
+			<div class="comment-footer">
+			  <div class="likes">
+				 <span class="likes-counter" data-likeCounter = "${comment.likes}">${comment.likes}</span>
+				 <button class="like-button ${comment.likeButtonClass}"></button>
+
+			  </div>
+			</div>
+		 </li>`
+
+	})
+
+	listComments.innerHTML = commentsHtml.join('');
+}
+
+
+// Рендер комменатриев для авторизованных пользователей
+export function renderCommentsAuthoriz(listComments,token) {
+	
 	const commentsHtml = comments.map((comment, index) => {
 		comment.likeButtonClass = '';
 
@@ -118,10 +152,10 @@ export function renderComments(listComments) {
 	})
 
 	listComments.innerHTML = commentsHtml.join('');
-	// initLikeButtonEventListeners();
-	// initEditButtonEventListeners();
-	// initDeleteButtonEventListeners();
-	// initAnswerCommentEventListener();
+		initLikeButtonEventListeners(listComments);
+		initEditButtonEventListeners(listComments);
+		initDeleteButtonEventListeners(listComments,token);
+		initAnswerCommentEventListener(listComments);
 }
 
 
@@ -138,20 +172,20 @@ export function renderAddForm(formBlock, token) {
 	formBlock.innerHTML = addFormHtml;
 
 	const formButton = formBlock.querySelector('.add-form-button');
+	const inputComment = formBlock.querySelector('.add-form-text');
+	const inputName = formBlock.querySelector('.add-form-name');
 
 	// Подписка на событие клика по кнопке "Написать"
 	formButton.addEventListener('click', () => {
-		const inputComment = formBlock.querySelector('.add-form-text');
-		const inputName = formBlock.querySelector('.add-form-name');
 		let inputNameValue = inputName.value;
 		let inputCommentValue = inputComment.value;
-	
+
 		hideError();
 		if (!isValid(inputNameValue, inputCommentValue)) {
 			showError(formBlock);
 			return;
-		}	
-	
+		}
+
 		let newComment = {
 			text: inputComment.value.
 				replaceAll("<", "&lt;").
@@ -159,40 +193,22 @@ export function renderAddForm(formBlock, token) {
 				replaceAll("/**", "<div class='quote'>").
 				replaceAll("**/", "</div>"),
 		}
-	
+
 		fetchPostandRender(newComment, token);
-	
+
 		renderLoading();
 		inputComment.value = '';
 	});
+
+	//Подписка на активность/неактивность кнопки "Написать"
+	formBlock.addEventListener('input', () => {
+		if (inputName.value && inputComment.value) {
+			formButton.disabled = false;
+			formButton.classList.remove('button-disabled')
+		} else {
+			formButton.disabled = true;
+			formButton.classList.add('button-disabled')
+		}
+	})
 }
-
-
-// Обработка добавления комментария
-// export function handlerAddComment(formBlock, token) {
-// 	const inputComment = formBlock.querySelector('.add-form-text');
-// 	const inputName = formBlock.querySelector('.add-form-name');
-// 	let inputNameValue = inputName.value;
-// 	let inputCommentValue = inputComment.value;
-
-// 	hideError();
-// 	if (!isValid(inputNameValue, inputCommentValue)) {
-// 		showError(formBlock);
-// 		return;
-// 	}	
-
-// 	let newComment = {
-// 		text: inputComment.value.
-// 			replaceAll("<", "&lt;").
-// 			replaceAll(">", "&gt;").
-// 			replaceAll("/**", "<div class='quote'>").
-// 			replaceAll("**/", "</div>"),
-// 	}
-
-// 	fetchPostandRender(newComment, token);
-
-// 	renderLoading();
-// 	inputComment.value = '';
-// }
-
 

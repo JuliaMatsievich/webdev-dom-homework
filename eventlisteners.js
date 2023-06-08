@@ -1,6 +1,7 @@
 import { listComments, autorizationButton, formBlock} from "./variables.js";
-import { renderEditComment, renderComments } from "./handlerComments.js";
-import { comments } from "./script.js";
+import { renderEditComment, renderComments, renderCommentsAuthoriz } from "./handlerComments.js";
+import { comments, fetchCommentsAndRenderAuthoriz } from "./script.js";
+import { deleteComments } from "./api.js";
 
 // Функция для имитации запросов в API
 function delay(interval = 300) {
@@ -12,7 +13,7 @@ function delay(interval = 300) {
 }
 
 // Подписка на события кнопки Редактировать
-export function initEditButtonEventListeners() {
+export function initEditButtonEventListeners(listComments) {
 	const EditButtons = listComments.querySelectorAll('.edit-button');
 
 	for (const EditButton of EditButtons) {
@@ -25,7 +26,7 @@ export function initEditButtonEventListeners() {
 }
 
 //Подписка на события клика по кнопке Лайк
-export function initLikeButtonEventListeners() {
+export function initLikeButtonEventListeners(listComments) {
 
 	const likeButtons = listComments.querySelectorAll('.like-button');
 
@@ -40,7 +41,7 @@ export function initLikeButtonEventListeners() {
 			delay(2000).then(() => {
 				comments[commentId].likes = comments[commentId].isLiked ? comments[commentId].likes -= 1 : comments[commentId].likes += 1;
 				comments[commentId].isLiked = !comments[commentId].isLiked;
-				renderComments()
+				renderCommentsAuthoriz(listComments,token)
 			});
 		})
 	}
@@ -48,16 +49,25 @@ export function initLikeButtonEventListeners() {
 
 
 //Подписка на кнопку Удалить комменатрий
-export function initDeleteButtonEventListeners() {
+export function initDeleteButtonEventListeners(listComments,token) {
 
 	const deleteButtons = document.querySelectorAll('.delete-button');
 
 	for (const deleteButton of deleteButtons) {
 		deleteButton.addEventListener('click', (event) => {
 			event.stopPropagation();
-			const index = deleteButton.dataset.index;
-			comments.splice(index, 1);
-			renderComments();
+			const id = deleteButton.dataset.index;
+			// comments.splice(index, 1);
+			// renderComments(listComments);
+			deleteComments({ token,id })
+			.then((responsData) => {
+				console.log(responsData);
+			})
+			.catch(error => {
+				console.log(error.message);
+			})
+			renderCommentsAuthoriz(listComments,token)
+
 		})
 	}
 }

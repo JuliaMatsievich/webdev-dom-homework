@@ -186,7 +186,8 @@ body {
   .add-form-button,
   .button-delete,
   .edit-form-button,
-  .enter-form-button {
+  .enter-form-button,
+  .register-form-button {
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -196,7 +197,8 @@ body {
     cursor: pointer;
   }
 
-  .enter-form-button {
+  .enter-form-button,
+  .register-form-button {
     width: 100%;
     margin-top: 0px;
   }
@@ -285,7 +287,5 @@ body {
   }
 
   .reg-button-auth {
-    margin-top: 20px;
-    align-self: center;
     cursor: pointer;
   }

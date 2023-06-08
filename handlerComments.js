@@ -150,9 +150,10 @@ export function renderCommentsAuthoriz(listComments,token) {
 		 </li>`
 
 	})
+	
 
 	listComments.innerHTML = commentsHtml.join('');
-		initLikeButtonEventListeners(listComments);
+		initLikeButtonEventListeners(listComments,token);
 		initEditButtonEventListeners(listComments);
 		initDeleteButtonEventListeners(listComments,token);
 		initAnswerCommentEventListener(listComments);

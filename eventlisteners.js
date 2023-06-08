@@ -26,7 +26,7 @@ export function initEditButtonEventListeners(listComments) {
 }
 
 //Подписка на события клика по кнопке Лайк
-export function initLikeButtonEventListeners(listComments) {
+export function initLikeButtonEventListeners(listComments,token) {
 
 	const likeButtons = listComments.querySelectorAll('.like-button');
 
@@ -60,8 +60,9 @@ export function initDeleteButtonEventListeners(listComments,token) {
 			// comments.splice(index, 1);
 			// renderComments(listComments);
 			deleteComments({ token,id })
-			.then((responsData) => {
-				console.log(responsData);
+			.then((comments) => {
+				console.log(comments);
+				fetchCommentsAndRenderAuthoriz(listComments);
 			})
 			.catch(error => {
 				console.log(error.message);

@@ -83,7 +83,6 @@ export function loginUser( { login, password} ) {
 
 //Функция запроса на удаление комментария
 export function deleteComments({ token,id }) {
-	console.log(`${baseUrl}/comments/` + id);
 	return fetch(`${baseUrl}/comments/` + id, {
 		method: 'DELETE',
 		headers: {
@@ -97,6 +96,24 @@ export function deleteComments({ token,id }) {
 			// if (response.status === 500) {
 			// 	throw new Error('код 500');
 			// }
+			return response.json();
+		})
+}
+
+//Запрос на регистрацию
+export function registerUser( { login, password, name} ) {
+	return fetch('https://wedev-api.sky.pro/api/user', {
+		method: "POST",
+		body: JSON.stringify({
+			login,
+			password,
+			name
+		})
+	})
+		.then((response) => {
+			if(response.status === 400) {
+				throw new Error('Такой пользователь уже существует')
+			}
 			return response.json();
 		})
 }

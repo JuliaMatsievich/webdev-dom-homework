@@ -85,6 +85,8 @@ function renderApp() {
 	const formBlock = document.querySelector('.form');
 	listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
 	if (!token) {
+
+
 		renderLoginComponent({
 			listComments,
 			formBlock,
@@ -94,7 +96,7 @@ function renderApp() {
 			fetchCommentsAndRenderAuthoriz
 		})
 	} else {
-		fetchCommentsAndRenderAuthoriz(listComments);
+		fetchCommentsAndRenderAuthoriz(listComments,formBlock);
 	}
 }
 

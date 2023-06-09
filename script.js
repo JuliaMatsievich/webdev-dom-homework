@@ -7,11 +7,20 @@ export let comments = [];
 
 let token = null;
 
+export const setToken = (newToken) => {
+	token = newToken
+}
+
+export const getToken = () => {
+	return token
+}
+
 export const fetchCommentsAndRender = (listComments) => {
 	return fetchGet()
 		.then(responseData => {
 			let appcomments = responseData.comments.map((comment) => {
 				return {
+					id: comment.id,
 					name: comment.author.name,
 					date: renderDate(comment.date),
 					text: comment.text,
@@ -38,6 +47,7 @@ export const fetchCommentsAndRenderAuthoriz = (listComments) => {
 		.then(responseData => {
 			let appcomments = responseData.comments.map((comment) => {
 				return {
+					id: comment.id,
 					name: comment.author.name,
 					date: renderDate(comment.date),
 					text: comment.text,

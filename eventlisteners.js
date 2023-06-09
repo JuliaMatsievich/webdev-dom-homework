@@ -57,9 +57,13 @@ export function initDeleteButtonEventListeners(listComments,token) {
 		deleteButton.addEventListener('click', (event) => {
 			event.stopPropagation();
 			const id = deleteButton.dataset.index;
+			const commentId = comments[id].id;
+			console.log(id);
+			console.log(comments[id]);
 			// comments.splice(index, 1);
 			// renderComments(listComments);
-			deleteComments({ token,id })
+			deleteComments({ token,
+				id: commentId})
 			.then((comments) => {
 				console.log(comments);
 				fetchCommentsAndRenderAuthoriz(listComments);

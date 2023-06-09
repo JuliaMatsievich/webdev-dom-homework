@@ -1,11 +1,11 @@
 import { registerUser } from "./api.js";
-import {renderLoginComponent} from './login-component.js';
+import {renderLoginComponent, renderEnterForm} from './login-component.js';
 import { fetchCommentsAndRenderAuthoriz } from "./script.js";
 import { renderAddForm } from "./handlerComments.js";
 
 
 //Рендер формы регистрации
-export function renderRegisterComponent(formBlock, listComments,setToken) {
+export function renderRegisterComponent(formBlock, listComments, setToken) {
 
 	const registerFormHtml = `
 		<div class="enter-form">
@@ -17,7 +17,7 @@ export function renderRegisterComponent(formBlock, listComments,setToken) {
 				<button class="register-form-button">Зарегистрироваться</button>
 			</div>
 			<div class="enter-form-row">
-			
+			<p class="reg-button-auth">Войти как авторизованный пользователь</p>
 			<p class="cancel-button">Вернуться к просмотру комментариев</p>
 			</div>
 		</div>
@@ -25,7 +25,7 @@ export function renderRegisterComponent(formBlock, listComments,setToken) {
 
 	formBlock.innerHTML = registerFormHtml;
 
-	// const regButtonAuth = document.querySelector('.reg-button-auth');
+	const regButtonAuth = document.querySelector('.reg-button-auth');
 	const registerButton = document.querySelector('.register-form-button');
 	const cancelButton = document.querySelector('.cancel-button');
 
@@ -41,17 +41,15 @@ export function renderRegisterComponent(formBlock, listComments,setToken) {
 		})
 	})
 
-	// regButtonAuth.addEventListener('click', () => {
+	regButtonAuth.addEventListener('click', () => {
 		
-	// 	renderEnterForm({
-	// 		listComments,
-	// 		formBlock,
-	// 		setToken: (newToken) => {
-	// 			token = newToken;
-	// 		},
-	// 		fetchCommentsAndRenderAuthoriz
-	// 	})
-	// })
+		renderEnterForm({
+			listComments,
+			formBlock,
+			setToken: setToken,
+			fetchCommentsAndRenderAuthoriz
+		})
+	})
 
 	registerButton.addEventListener('click', () => {
 		const name = formBlock.querySelector('.enter-form-name').value;

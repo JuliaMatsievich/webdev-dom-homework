@@ -90,12 +90,9 @@ export function deleteComments({ token,id }) {
 		},
 	})
 		.then((response) => {			
-			// if (response.status === 400) {
-			// 	throw new Error('код 400');
-			// }
-			// if (response.status === 500) {
-			// 	throw new Error('код 500');
-			// }
+			if (response.status === 500) {
+				throw new Error('Сервер сломался');
+			}
 			return response.json();
 		})
 }
@@ -113,6 +110,22 @@ export function registerUser( { login, password, name} ) {
 		.then((response) => {
 			if(response.status === 400) {
 				throw new Error('Такой пользователь уже существует')
+			}
+			return response.json();
+		})
+}
+
+//Запрос на Переключение лайков
+export function toggleLike ({ token,id }) {
+	return fetch(`${baseUrl}/comments/${id}/toggle-like`, {
+		method: "POST",
+		headers: {
+			Authorization: token,
+		},
+	})
+		.then((response) => {
+			if(response.status === 500) {
+				throw new Error('Сервер сломался')
 			}
 			return response.json();
 		})

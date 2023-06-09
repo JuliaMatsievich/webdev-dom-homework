@@ -101,7 +101,8 @@ export const renderApp = () => {
 		})
 	} else {
 		fetchCommentsAndRenderAuthoriz(listComments,formBlock);
-		renderAddForm(formBlock, token);
+		token = getLocalStorage().token;
+		renderAddForm(formBlock,token);
 		const inputName = document.querySelector('.add-form-name');
 		inputName.value = getLocalStorage().userName;
 		inputName.disabled = true;

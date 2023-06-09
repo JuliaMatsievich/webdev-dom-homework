@@ -1,7 +1,7 @@
 import { listComments, autorizationButton, formBlock} from "./variables.js";
 import { renderEditComment, renderComments, renderCommentsAuthoriz } from "./handlerComments.js";
 import { comments, fetchCommentsAndRenderAuthoriz } from "./script.js";
-import { deleteComments } from "./api.js";
+import { deleteComments, toggleLike } from "./api.js";
 
 // Функция для имитации запросов в API
 function delay(interval = 300) {
@@ -35,14 +35,15 @@ export function initLikeButtonEventListeners(listComments,token) {
 			event.stopPropagation();
 			const target = event.target;
 			const commentParrent = target.closest('.comment');
-			const commentId = commentParrent.dataset.comment;
+			const id = commentParrent.dataset.comment;
+			const commentId = comments[id].id;
 			likeButton.classList.add('-loading-like');
-
-			delay(2000).then(() => {
-				comments[commentId].likes = comments[commentId].isLiked ? comments[commentId].likes -= 1 : comments[commentId].likes += 1;
-				comments[commentId].isLiked = !comments[commentId].isLiked;
-				renderCommentsAuthoriz(listComments,token)
-			});
+			toggleLike({token,id: commentId})
+			.then(result => {
+				comments[id].likes = result.result.likes;
+				comments[id].isLiked = result.result.isLiked;
+				renderCommentsAuthoriz(listComments,token);
+			})
 		})
 	}
 }
@@ -58,17 +59,15 @@ export function initDeleteButtonEventListeners(listComments,token) {
 			event.stopPropagation();
 			const id = deleteButton.dataset.index;
 			const commentId = comments[id].id;
-			console.log(id);
-			console.log(comments[id]);
-			// comments.splice(index, 1);
-			// renderComments(listComments);
 			deleteComments({ token,
 				id: commentId})
 			.then((comments) => {
-				console.log(comments);
 				fetchCommentsAndRenderAuthoriz(listComments);
 			})
 			.catch(error => {
+				if (error.message === 'Сервер сломался') {
+					fetchCommentsAndRenderAuthoriz(listComments);
+				}
 				console.log(error.message);
 			})
 			renderCommentsAuthoriz(listComments,token)

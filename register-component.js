@@ -31,24 +31,11 @@ export function renderRegisterComponent(formBlock, listComments, setToken) {
 
 	cancelButton.addEventListener('click', () => {
 		listComments.classList.remove('hidden');
-		renderLoginComponent({
-			listComments,
-			formBlock,
-			setToken: (newToken) => {
-				token = newToken;
-			},
-			fetchCommentsAndRenderAuthoriz
-		})
+		renderLoginComponent({listComments,formBlock,setToken,fetchCommentsAndRenderAuthoriz})
 	})
 
-	regButtonAuth.addEventListener('click', () => {
-		
-		renderEnterForm({
-			listComments,
-			formBlock,
-			setToken: setToken,
-			fetchCommentsAndRenderAuthoriz
-		})
+	regButtonAuth.addEventListener('click', () => {		
+		renderEnterForm({listComments,formBlock,setToken,fetchCommentsAndRenderAuthoriz})
 	})
 
 	registerButton.addEventListener('click', () => {

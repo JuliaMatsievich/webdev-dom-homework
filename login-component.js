@@ -75,8 +75,10 @@ export function renderEnterForm({ listComments, formBlock, setToken, fetchCommen
 					listComments.classList.remove('hidden');
 					setToken(`Bearer ${user.user.token}`);
 					fetchCommentsAndRenderAuthoriz(listComments);
-					
 					renderAddForm(formBlock, `Bearer ${user.user.token}`);
+					setLocalStorage(login,password);
+					console.log(getLocalStorage());
+
 					const inputName = document.querySelector('.add-form-name');
 					inputName.value = user.user.name
 					inputName.disabled = true;
@@ -85,4 +87,19 @@ export function renderEnterForm({ listComments, formBlock, setToken, fetchCommen
 					alert(error.message);
 				})
 		})	
+}
+
+
+export const setLocalStorage = (login,password) => {
+	localStorage.setItem('login', login);
+	localStorage.setItem('password', password);
+}
+
+export const getLocalStorage = () => {
+	const authoriz = {};
+	const login = localStorage.getItem('login');
+	const password = localStorage.getItem('password');
+	authoriz.login = login;
+	authoriz.passwsord = password;
+	return authoriz;
 }

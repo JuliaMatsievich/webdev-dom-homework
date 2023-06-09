@@ -1,6 +1,7 @@
-import { comments, fetchPostandRender } from "./script.js";
+import { comments, fetchPostandRender, fetchCommentsAndRenderAuthoriz, renderApp } from "./script.js";
 import { renderLoading, removerLoading } from "./handlerLoading.js";
 import { initEditButtonEventListeners, initLikeButtonEventListeners, initDeleteButtonEventListeners, initAnswerCommentEventListener } from "./eventlisteners.js";
+import { renderLoginComponent } from "./login-component.js";
 
 
 //Показать ошибку
@@ -167,6 +168,7 @@ export function renderAddForm(formBlock, token) {
 			<input type="text" class="add-form-name" placeholder="Введите ваше имя" />
 			<textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
 			<div class="add-form-row">
+				<button class='add-form-cancel-button'>Выйти</button>
 				<button class="add-form-button button-disabled ">Написать</button>
 		</div>
 	`
@@ -175,6 +177,7 @@ export function renderAddForm(formBlock, token) {
 	const formButton = formBlock.querySelector('.add-form-button');
 	const inputComment = formBlock.querySelector('.add-form-text');
 	const inputName = formBlock.querySelector('.add-form-name');
+	const cancelButton = formBlock.querySelector('.add-form-cancel-button');
 
 	// Подписка на событие клика по кнопке "Написать"
 	formButton.addEventListener('click', () => {
@@ -210,6 +213,12 @@ export function renderAddForm(formBlock, token) {
 			formButton.disabled = true;
 			formButton.classList.add('button-disabled')
 		}
+	})
+
+	//Подписка на кнопку Выйти из авторизации
+	cancelButton.addEventListener('click',() => {
+		localStorage.clear();
+		renderApp();
 	})
 }
 

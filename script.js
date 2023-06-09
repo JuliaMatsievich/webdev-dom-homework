@@ -1,11 +1,14 @@
 import { fetchGet, fetchGetAuthoriz, fetchPost } from "./api.js";
-import { renderDate, renderComments, renderCommentsAuthoriz  } from "./handlerComments.js";
+import { renderDate, renderComments, renderCommentsAuthoriz, renderAddForm } from "./handlerComments.js";
 import { renderLoading, removerLoading } from "./handlerLoading.js";
-import { renderLoginComponent } from './login-component.js';
+import { renderLoginComponent, getLocalStorage } from './login-component.js';
 
 export let comments = [];
 
 let token = null;
+
+
+
 
 export const fetchCommentsAndRender = (listComments) => {
 	return fetchGet()
@@ -51,7 +54,7 @@ export const fetchCommentsAndRenderAuthoriz = (listComments) => {
 			comments = appcomments;
 			renderCommentsAuthoriz(listComments,token)
 			removerLoading();
-		})
+			})
 		.catch(error => {
 			if (error.message === 'Сервер сломался') {
 				fetchCommentsAndRenderAuthoriz(listComments);
@@ -82,13 +85,12 @@ export function fetchPostandRender(newComment, token) {
 		});
 }
 
-function renderApp() {
+export const renderApp = () => {
 	const listComments = document.querySelector('.comments');
 	const formBlock = document.querySelector('.form');
 	listComments.textContent = 'Подождите, пожалуйста, комментарии загружаются...';
-	if (!token) {
 
-
+	if (!getLocalStorage().token) {
 		renderLoginComponent({
 			listComments,
 			formBlock,
@@ -99,6 +101,10 @@ function renderApp() {
 		})
 	} else {
 		fetchCommentsAndRenderAuthoriz(listComments,formBlock);
+		renderAddForm(formBlock, token);
+		const inputName = document.querySelector('.add-form-name');
+		inputName.value = getLocalStorage().userName;
+		inputName.disabled = true;
 	}
 }
 

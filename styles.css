@@ -168,7 +168,7 @@ body {
 
   .add-form-row {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
   }
 
   .enter-form-row {
@@ -187,7 +187,8 @@ body {
   .button-delete,
   .edit-form-button,
   .enter-form-button,
-  .register-form-button {
+  .register-form-button,
+  .add-form-cancel-button {
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -289,3 +290,5 @@ body {
   .reg-button-auth {
     cursor: pointer;
   }
+
+  .add-form-cancel-button {}

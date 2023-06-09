@@ -76,9 +76,7 @@ export function renderEnterForm({ listComments, formBlock, setToken, fetchCommen
 					setToken(`Bearer ${user.user.token}`);
 					fetchCommentsAndRenderAuthoriz(listComments);
 					renderAddForm(formBlock, `Bearer ${user.user.token}`);
-					setLocalStorage(login,password);
-					console.log(getLocalStorage());
-
+					setLocalStorage (login,password,`Bearer ${user.user.token}`,user.user.name) ;
 					const inputName = document.querySelector('.add-form-name');
 					inputName.value = user.user.name
 					inputName.disabled = true;
@@ -89,17 +87,23 @@ export function renderEnterForm({ listComments, formBlock, setToken, fetchCommen
 		})	
 }
 
-
-export const setLocalStorage = (login,password) => {
+const setLocalStorage = (login,password,token,userName) => {
 	localStorage.setItem('login', login);
 	localStorage.setItem('password', password);
+	localStorage.setItem('token',token);
+	localStorage.setItem('userName',userName);
+
 }
 
 export const getLocalStorage = () => {
 	const authoriz = {};
 	const login = localStorage.getItem('login');
 	const password = localStorage.getItem('password');
+	const token = localStorage.getItem('token');
+	const userName = localStorage.getItem('userName');
 	authoriz.login = login;
-	authoriz.passwsord = password;
+	authoriz.password = password;
+	authoriz.token = token;
+	authoriz.userName = userName;
 	return authoriz;
 }

@@ -20,7 +20,7 @@ export const fetchCommentsAndRender = (listComments) => {
 					date: renderDate(comment.date),
 					text: comment.text,
 					likes: comment.likes,
-					isLiked: false,
+					isLiked: comment.isLiked,
 					forceError: true
 				}
 			})
@@ -47,7 +47,7 @@ export const fetchCommentsAndRenderAuthoriz = (listComments) => {
 					date: renderDate(comment.date),
 					text: comment.text,
 					likes: comment.likes,
-					isLiked: false,
+					isLiked: comment.isLiked,
 					forceError: true
 				}
 			})

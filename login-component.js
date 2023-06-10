@@ -28,7 +28,7 @@ export const renderEnterForm = ({ listComments, formBlock, setToken, fetchCommen
 		<div class="enter-form">
 			<h2 class="enter-title">Форма входа</h2>
 			<input type="text" class="enter-form-login" placeholder="Введите ваш логин" />
-			<input type="text" class="enter-form-password" placeholder="Введите ваш пароль" />
+			<input type="password" class="enter-form-password" placeholder="Введите ваш пароль" />
 			<div class="enter-form-row">
 				<button class="enter-form-button">Войти</button>
 			</div>

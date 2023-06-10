@@ -29,7 +29,6 @@ function isValid(name, comment) {
 	}
 }
 
-
 //Создание даты в нужном формате
 // export function renderDate(dataDate) {
 // 	const date = new Date(dataDate);
@@ -41,7 +40,6 @@ function isValid(name, comment) {
 
 // 	return `${dateData} ${time}`;
 // }
-
 
 //Создание формы редактирования комментария
 export function renderEditComment(element) {

@@ -1,12 +1,12 @@
 import { registerUser } from "./api.js";
-import {renderLoginComponent, renderEnterForm} from './login-component.js';
+import { renderLoginComponent, renderEnterForm, setLocalStorage } from './login-component.js';
 import { fetchCommentsAndRenderAuthoriz } from "./script.js";
 import { renderAddForm } from "./handlerComments.js";
 
 
 //Рендер формы регистрации
 export function renderRegisterComponent(formBlock, listComments, setToken) {
-
+	
 	const registerFormHtml = `
 		<div class="enter-form">
 			<h2 class="enter-title">Форма регистрации</h2>
@@ -31,11 +31,11 @@ export function renderRegisterComponent(formBlock, listComments, setToken) {
 
 	cancelButton.addEventListener('click', () => {
 		listComments.classList.remove('hidden');
-		renderLoginComponent({listComments,formBlock,setToken,fetchCommentsAndRenderAuthoriz})
+		renderLoginComponent({ listComments, formBlock, setToken, fetchCommentsAndRenderAuthoriz })
 	})
 
-	regButtonAuth.addEventListener('click', () => {		
-		renderEnterForm({listComments,formBlock,setToken,fetchCommentsAndRenderAuthoriz})
+	regButtonAuth.addEventListener('click', () => {
+		renderEnterForm({ listComments, formBlock, setToken, fetchCommentsAndRenderAuthoriz })
 	})
 
 	registerButton.addEventListener('click', () => {
@@ -48,17 +48,18 @@ export function renderRegisterComponent(formBlock, listComments, setToken) {
 			password: password,
 			name: name,
 		})
-		.then((user) => {
-			listComments.classList.remove('hidden');
-			setToken(`Bearer ${user.user.token}`);
-			fetchCommentsAndRenderAuthoriz(listComments);
-			renderAddForm(formBlock, `Bearer ${user.user.token}`);
-			const inputName = document.querySelector('.add-form-name');
-			inputName.value = user.user.name
-			inputName.disabled = true;
-		})
-		.catch((error) => {
-			alert(error.message);
-		})
+			.then((user) => {
+				listComments.classList.remove('hidden');
+				setToken(`Bearer ${user.user.token}`);
+				fetchCommentsAndRenderAuthoriz(listComments);
+				renderAddForm(formBlock, `Bearer ${user.user.token}`);
+				setLocalStorage (login,password,`Bearer ${user.user.token}`,user.user.name);
+				const inputName = document.querySelector('.add-form-name');
+				inputName.value = user.user.name
+				inputName.disabled = true;
+			})
+			.catch((error) => {
+				alert(error.message);
+			})
 	})
 }

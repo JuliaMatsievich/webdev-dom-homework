@@ -100,7 +100,7 @@ export const renderApp = () => {
 			fetchCommentsAndRenderAuthoriz
 		})
 	} else {
-		fetchCommentsAndRenderAuthoriz(listComments,formBlock);
+		fetchCommentsAndRenderAuthoriz(listComments);
 		token = getLocalStorage().token;
 		renderAddForm(formBlock,token);
 		const inputName = document.querySelector('.add-form-name');
@@ -118,13 +118,4 @@ renderApp();
 // 	}
 // });
 
-//Подписка на активность/неактивность кнопки "Написать"
-// form.addEventListener('input', () => {
-// 	if (inputName.value && inputComment.value) {
-// 		formButton.disabled = false;
-// 		formButton.classList.remove('button-disabled')
-// 	} else {
-// 		formButton.disabled = true;
-// 		formButton.classList.add('button-disabled')
-// 	}
-// })
+

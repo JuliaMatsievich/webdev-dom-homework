@@ -3,7 +3,7 @@ import { fetchCommentsAndRender } from "./script.js";
 import { renderAddForm } from "./handlerComments.js";
 import { renderRegisterComponent } from "./register-component.js";
 
-export function renderLoginComponent({ listComments, formBlock, setToken, fetchCommentsAndRenderAuthoriz }) {
+export const renderLoginComponent = ({ listComments, formBlock, setToken, fetchCommentsAndRenderAuthoriz }) => {
 	fetchCommentsAndRender(listComments);
 
 	const initialHtml = `
@@ -15,13 +15,14 @@ export function renderLoginComponent({ listComments, formBlock, setToken, fetchC
 	const autorizationButton = document.querySelector('.autorization-button');
 
 	autorizationButton.addEventListener('click', () => {
+		listComments.classList.add('hidden');
 		renderEnterForm({listComments,formBlock,setToken,fetchCommentsAndRenderAuthoriz})
 	})
 }
 
 //Рендер формы входа
-export function renderEnterForm({ listComments, formBlock, setToken, fetchCommentsAndRenderAuthoriz }) {
-	listComments.classList.add('hidden');
+export const renderEnterForm = ({ listComments, formBlock, setToken, fetchCommentsAndRenderAuthoriz }) => {
+	
 
 		const enterFormHtml = `
 		<div class="enter-form">
@@ -45,7 +46,7 @@ export function renderEnterForm({ listComments, formBlock, setToken, fetchCommen
 		const enterButton = document.querySelector('.enter-form-button');
 
 		regButton.addEventListener('click', () => {
-			renderRegisterComponent(formBlock);
+			renderRegisterComponent(formBlock, listComments, setToken);
 		})
 
 		cancelButton.addEventListener('click', () => {
@@ -76,7 +77,7 @@ export function renderEnterForm({ listComments, formBlock, setToken, fetchCommen
 					setToken(`Bearer ${user.user.token}`);
 					fetchCommentsAndRenderAuthoriz(listComments);
 					renderAddForm(formBlock, `Bearer ${user.user.token}`);
-					setLocalStorage (login,password,`Bearer ${user.user.token}`,user.user.name) ;
+					setLocalStorage (login,password,`Bearer ${user.user.token}`,user.user.name);
 					const inputName = document.querySelector('.add-form-name');
 					inputName.value = user.user.name
 					inputName.disabled = true;
@@ -87,7 +88,7 @@ export function renderEnterForm({ listComments, formBlock, setToken, fetchCommen
 		})	
 }
 
-const setLocalStorage = (login,password,token,userName) => {
+export const setLocalStorage = (login,password,token,userName) => {
 	localStorage.setItem('login', login);
 	localStorage.setItem('password', password);
 	localStorage.setItem('token',token);

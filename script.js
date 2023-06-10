@@ -2,6 +2,7 @@ import { fetchGet, fetchGetAuthoriz, fetchPost } from "./api.js";
 import { renderDate, renderComments, renderCommentsAuthoriz, renderAddForm } from "./handlerComments.js";
 import { renderLoading, removerLoading } from "./handlerLoading.js";
 import { renderLoginComponent, getLocalStorage } from './login-component.js';
+import { format } from "date-fns";
 
 export let comments = [];
 

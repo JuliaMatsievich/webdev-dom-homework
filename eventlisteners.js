@@ -1,6 +1,7 @@
-import { listComments, inputComment } from "./variables.js";
-import { renderEditComment, renderComments } from "./render.js";
-import { comments } from "./api.js";
+import { listComments, autorizationButton, formBlock} from "./variables.js";
+import { renderEditComment, renderComments, renderCommentsAuthoriz } from "./handlerComments.js";
+import { comments, fetchCommentsAndRenderAuthoriz } from "./script.js";
+import { deleteComments, toggleLike } from "./api.js";
 
 // Функция для имитации запросов в API
 function delay(interval = 300) {
@@ -12,7 +13,7 @@ function delay(interval = 300) {
 }
 
 // Подписка на события кнопки Редактировать
-export function initEditButtonEventListeners() {
+export function initEditButtonEventListeners(listComments) {
 	const EditButtons = listComments.querySelectorAll('.edit-button');
 
 	for (const EditButton of EditButtons) {
@@ -25,7 +26,7 @@ export function initEditButtonEventListeners() {
 }
 
 //Подписка на события клика по кнопке Лайк
-export function initLikeButtonEventListeners() {
+export function initLikeButtonEventListeners(listComments,token) {
 
 	const likeButtons = listComments.querySelectorAll('.like-button');
 
@@ -34,30 +35,43 @@ export function initLikeButtonEventListeners() {
 			event.stopPropagation();
 			const target = event.target;
 			const commentParrent = target.closest('.comment');
-			const commentId = commentParrent.dataset.comment;
+			const id = commentParrent.dataset.comment;
+			const commentId = comments[id].id;
 			likeButton.classList.add('-loading-like');
-
-			delay(2000).then(() => {
-				comments[commentId].likes = comments[commentId].isLiked ? comments[commentId].likes -= 1 : comments[commentId].likes += 1;
-				comments[commentId].isLiked = !comments[commentId].isLiked;
-				renderComments()
-			});
+			toggleLike({token,id: commentId})
+			.then(result => {
+				comments[id].likes = result.result.likes;
+				comments[id].isLiked = result.result.isLiked;
+				renderCommentsAuthoriz(listComments,token);
+			})
 		})
 	}
 }
 
 
 //Подписка на кнопку Удалить комменатрий
-export function initDeleteButtonEventListeners() {
+export function initDeleteButtonEventListeners(listComments,token) {
 
 	const deleteButtons = document.querySelectorAll('.delete-button');
 
 	for (const deleteButton of deleteButtons) {
 		deleteButton.addEventListener('click', (event) => {
 			event.stopPropagation();
-			const index = deleteButton.dataset.index;
-			comments.splice(index, 1);
-			renderComments();
+			const id = deleteButton.dataset.index;
+			const commentId = comments[id].id;
+			deleteComments({ token,
+				id: commentId})
+			.then((comments) => {
+				fetchCommentsAndRenderAuthoriz(listComments);
+			})
+			.catch(error => {
+				if (error.message === 'Сервер сломался') {
+					fetchCommentsAndRenderAuthoriz(listComments);
+				}
+				console.log(error.message);
+			})
+			renderCommentsAuthoriz(listComments,token)
+
 		})
 	}
 }
@@ -65,6 +79,7 @@ export function initDeleteButtonEventListeners() {
 //Подписка на событие ответить на комментарий
 export function initAnswerCommentEventListener() {
 	const commentElements = document.querySelectorAll('.comment');
+	const inputComment = document.querySelector('.add-form-text')
 
 	for (const commentElement of commentElements) {
 		commentElement.addEventListener('click', (event) => {
@@ -78,3 +93,4 @@ export function initAnswerCommentEventListener() {
 		})
 	}
 }
+

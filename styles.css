@@ -6,6 +6,7 @@ body {
     padding: 0;
     margin: 0;
     border: 0;
+    box-sizing: border-box;
   }
 
   .container {
@@ -28,7 +29,8 @@ body {
   }
 
   .comment,
-  .add-form
+  .add-form,
+  .enter-form
   {
     width: 596px;
     box-sizing: border-box;
@@ -123,7 +125,8 @@ body {
     background-image: url("./img/delete-green.png" );
   }
 
-  .add-form {
+  .add-form,
+  .enter-form {
     padding: 20px;
     margin-top: 48px;
     display: flex;
@@ -132,7 +135,10 @@ body {
 
   .add-form-name,
   .add-form-text,
-  .edit-form-text {
+  .edit-form-text,
+  .enter-form-name,
+  .enter-form-login,
+  .enter-form-password {
     font-size: 16px;
     font-family: Helvetica;
     border-radius: 8px;
@@ -142,6 +148,14 @@ body {
   .add-form-name {
     width: 300px;
     padding: 11px 22px;
+  }
+
+  .enter-form-name,
+  .enter-form-login,
+  .enter-form-password {
+    width: 100%;
+    padding: 11px 22px;
+    margin-bottom: 15px;
   }
 
   .add-form-text,
@@ -154,12 +168,27 @@ body {
 
   .add-form-row {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+  }
+
+  .enter-form-row {
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-around;
+  }
+
+
+  .enter-title {
+    margin-bottom: 20px;
+    align-self: center;
   }
 
   .add-form-button,
   .button-delete,
-  .edit-form-button {
+  .edit-form-button,
+  .enter-form-button,
+  .register-form-button,
+  .add-form-cancel-button {
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -167,6 +196,12 @@ body {
     border: none;
     border-radius: 18px;
     cursor: pointer;
+  }
+
+  .enter-form-button,
+  .register-form-button {
+    width: 100%;
+    margin-top: 0px;
   }
 
   .button-delete {
@@ -226,3 +261,34 @@ body {
   .-loading-like {
     animation: rotating 2s linear infinite;
   }
+
+  .form {
+    margin-top: 20px;
+  }
+
+  .autorization-button {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .autorization-button:hover {
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .reg-button,
+  .cancel-button {
+    cursor: pointer;
+  }
+
+  .reg-button:hover,
+  .cancel-button:hover,
+  .reg-button-auth:hover  {
+    text-decoration: underline;
+  }
+
+  .reg-button-auth {
+    cursor: pointer;
+  }
+
+  .add-form-cancel-button {}

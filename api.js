@@ -1,83 +1,132 @@
-import { renderDate, renderComments } from './render.js';
+//Документация к апи: https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/v2/%5Bkey%5D/comments/README.md
+
+
+import { renderDate, renderComments } from './handlerComments.js';
 import { removerLoading } from "./handlerLoading.js" ;
-import { inputName, inputComment } from "./variables.js";
-import { initialState } from './script.js'; 
-import { inputNameValue, inputCommentValue } from './handlerAddComments.js'
+// import { inputName, inputComment } from "./variables.js";
+// import { initialState } from './script.js'; 
+// import { inputNameValue, inputCommentValue } from './handlerAddComments.js'
 
-export let comments = [];
+// export let comments = [];
+
+const baseUrl = "https://wedev-api.sky.pro/api/v2/julia-matsievich";
+const baseUrlApi = 'https://wedev-api.sky.pro/api';
 
 
-// Функция запроса GET
+// Функция запроса GET НЕавторизованного пользователя
 export function fetchGet() {
-		fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
-		method: 'GET'
-	})
-	.then(response => {
-		if(response.status === 500) {
-			throw new Error('код 500');
-		}
-		return response.json()
-	})
-	.then(responseData => {
-			let appcomments = responseData.comments.map((comment) => {
-				return {
-					name: comment.author.name,
-					date: renderDate(comment.date),
-					text: comment.text,
-					likes: comment.likes,
-					isLiked: false,
-					forceError: true
-				}
-			})
-			comments = appcomments;
-			renderComments();
-			removerLoading();
-		})
-		.catch(error => {
-			if(error.message === 'код 500') {
-				fetchGet();
-			}
-			console.log(error);
-			alert('Кажется, у вас сломался интернет, попробуйте позже')
-		})
+	return fetch(`${baseUrl}/comments`, {
+	method: 'GET',
+})
+.then(response => {
+	if(response.status === 500) {
+		throw new Error('Сервер сломался');
+	}
+	return response.json()
+})
 }
 
 
+// Функция запроса GET авторизованного пользователя
+export function fetchGetAuthoriz(token) {
+	return fetch(`${baseUrl}/comments`, {
+	method: 'GET',
+	headers: {
+		Authorization: token,
+	},
+})
+.then(response => {
+	if(response.status === 500) {
+		throw new Error('Сервер сломался');
+	}
+	return response.json()
+})
+}
 
 // Функция запроса POST
-export const fetchPost = (newComment) => {
-	fetch('https://webdev-hw-api.vercel.app/api/v1/julia-matsievich/comments', {
+export const fetchPost = (newComment, token) => {
+	return fetch(`${baseUrl}/comments`, {
 		method: 'POST',
-		body: JSON.stringify(newComment)
+		body: JSON.stringify(newComment),
+		headers: {
+			Authorization: token,
+		},
 	})
-		.then(response => {
+		.then(response => {			
 			if (response.status === 400) {
-				throw new Error('код 400');
+				throw new Error('Плохой запрос');
 			}
 			if (response.status === 500) {
-				throw new Error('код 500');
+				throw new Error('Сервер сломался');
 			}
 			return response.json();
 		})
-		.then(responseData => {
-			comments = responseData.comments;
-			fetchGet()
-		})
-		.catch(error => {
-			removerLoading();
-			inputName.value = inputNameValue;
-			inputComment.value = inputCommentValue;
-			if (error.message === 'код 400') {
-				alert('Имя и комментарий должны быть не менее 3х символов');
-				return;
+}
+
+//Функция запроса на авторизацию
+export function loginUser( { login, password} ) {
+	return fetch(`${baseUrlApi}/user/login`, {
+				method: 'POST',
+				body: JSON.stringify({
+					login,
+					password
+				}),
+			})
+			.then(response => {
+				if (response.status === 400) {
+					throw new Error('Неверный логин или пароль')
+				}
+				return response.json();
+			})
+}
+
+
+//Функция запроса на удаление комментария
+export function deleteComments({ token,id }) {
+	return fetch(`${baseUrl}/comments/` + id, {
+		method: 'DELETE',
+		headers: {
+			Authorization: token,
+		},
+	})
+		.then((response) => {			
+			if (response.status === 500) {
+				throw new Error('Сервер сломался');
 			}
-			if (error.message === 'код 500') {
-				fetchPost(newComment);
-				initialState();
-			} else {
-				alert('Кажется, у вас сломался интернет, попробуйте позже')
-				console.log(error);
-			}
+			return response.json();
 		})
 }
 
+//Запрос на регистрацию
+export function registerUser( { login, password, name} ) {
+	return fetch('https://wedev-api.sky.pro/api/user', {
+		method: "POST",
+		body: JSON.stringify({
+			login,
+			password,
+			name
+		})
+	})
+		.then((response) => {
+			if(response.status === 400) {
+				throw new Error('Такой пользователь уже существует')
+			}
+			return response.json();
+		})
+}
+
+//Запрос на Переключение лайков
+export function toggleLike ({ token,id }) {
+	return fetch(`${baseUrl}/comments/${id}/toggle-like`, {
+		method: "POST",
+		headers: {
+			Authorization: token,
+		},
+	})
+		.then((response) => {
+			if(response.status === 500) {
+				throw new Error('Сервер сломался')
+			}
+			return response.json();
+		})
+}

@@ -29,19 +29,17 @@ function isValid(name, comment) {
 	}
 }
 
-
 //Создание даты в нужном формате
-export function renderDate(dataDate) {
-	const date = new Date(dataDate);
-	const dateDataArr = date.toLocaleDateString().split('.')
-	dateDataArr[dateDataArr.length - 1] = dateDataArr[dateDataArr.length - 1].slice(2);
-	const dateData = dateDataArr.join('.');
+// export function renderDate(dataDate) {
+// 	const date = new Date(dataDate);
+// 	const dateDataArr = date.toLocaleDateString().split('.')
+// 	dateDataArr[dateDataArr.length - 1] = dateDataArr[dateDataArr.length - 1].slice(2);
+// 	const dateData = dateDataArr.join('.');
 
-	const time = date.toLocaleTimeString().slice(0, -3);
+// 	const time = date.toLocaleTimeString().slice(0, -3);
 
-	return `${dateData} ${time}`;
-}
-
+// 	return `${dateData} ${time}`;
+// }
 
 //Создание формы редактирования комментария
 export function renderEditComment(element) {

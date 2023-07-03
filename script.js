@@ -1,23 +1,22 @@
 import { fetchGet, fetchGetAuthoriz, fetchPost } from "./api.js";
-import { renderDate, renderComments, renderCommentsAuthoriz, renderAddForm } from "./handlerComments.js";
+import { renderComments, renderCommentsAuthoriz, renderAddForm } from "./handlerComments.js";
 import { renderLoading, removerLoading } from "./handlerLoading.js";
 import { renderLoginComponent, getLocalStorage } from './login-component.js';
+import { format } from "date-fns";
 
 export let comments = [];
 
 let token = null;
 
-
-
-
 export const fetchCommentsAndRender = (listComments) => {
 	return fetchGet()
 		.then(responseData => {
 			let appcomments = responseData.comments.map((comment) => {
+				const createDate = format(new Date(comment.date), 'yyyy-MM-dd hh.mm.ss');
 				return {
 					id: comment.id,					
 					name: comment.author.name,
-					date: renderDate(comment.date),
+					date: createDate,
 					text: comment.text,
 					likes: comment.likes,
 					isLiked: comment.isLiked,
@@ -41,10 +40,11 @@ export const fetchCommentsAndRenderAuthoriz = (listComments) => {
 	return fetchGetAuthoriz(token)
 		.then(responseData => {
 			let appcomments = responseData.comments.map((comment) => {
+				const createDate = format(new Date(comment.date), 'yyyy-MM-dd hh.mm.ss');
 				return {
 					id: comment.id,
 					name: comment.author.name,
-					date: renderDate(comment.date),
+					date: createDate,
 					text: comment.text,
 					likes: comment.likes,
 					isLiked: comment.isLiked,
